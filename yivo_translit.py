@@ -60,16 +60,16 @@ def transliterate(string):
     return romanized
 
 reverse_translit_table = [ # to precombined
-    (r'^ay|(?<=\W)ay', 'אײַ'),
-    (r'^ey|(?<=\W)ey', 'אײ'),
-    (r'^oy|(?<=\W)oy', 'אױ'),
-    (r'^u|(?<=\W)u', 'או'),
-    (r'^i|(?<=\W)i', 'אי'),
-    (r'kh$|kh(?=\W)', 'ך'),
-    (r'm$|m(?=\W)', 'ם'),
-    (r'n$|n(?=\W)', 'ן'),
-    (r'f$|f(?=\W)', 'ף'),
-    (r'ts$|ts(?=\W)', 'ץ'),
+    (r'\bay', 'אײַ'),
+    (r'\bey', 'אײ'),
+    (r'\boy', 'אױ'),
+    (r'\bu', 'או'),
+    (r'\bi', 'אי'),
+    (r'kh\b', 'ך'),
+    (r'm\b', 'ם'),
+    (r'n\b', 'ן'),
+    (r'f\b', 'ף'),
+    (r'ts\b', 'ץ'),
     ('ay', 'ײַ'),
     ('ey', 'ײ'),
     ('oy', 'ױ'),
@@ -106,6 +106,11 @@ reverse_translit_table = [ # to precombined
     ('v', 'װ'),
     ('y', 'י'),
     ('z', 'ז'),
+    (r'ך(\'|")', r'כ\1'), # fix mistakes: for abbreviations/acronyms
+    (r'ם(\'|")', r'מ\1'),
+    (r'ן(\'|")', r'נ\1'),
+    (r'ף(\'|")', r'פֿ\1'),
+    (r'ץ(\'|")', r'צ\1'),
 ]
 
 def detransliterate(string):
