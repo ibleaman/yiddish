@@ -1,6 +1,6 @@
-import yiddish_unicode
-
+import re
 from urllib.request import urlopen
+import yiddish_unicode
 
 url = 'https://raw.githubusercontent.com/ibleaman/loshn-koydesh-pronunciation/master/orthographic-to-phonetic.txt'
 respellings_list = urlopen(url).read().decode('utf-8')
