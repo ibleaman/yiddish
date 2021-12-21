@@ -1,5 +1,12 @@
+# Functions for processing Yiddish text, written in the YIVO orthography
+# Author: Isaac L. Bleaman (bleaman@berkeley.edu)
+
 import re
 from urllib.request import urlopen
+
+##########
+# encoding
+##########
 
 pairs = [
     ('וּ', 'וּ'),
@@ -38,6 +45,10 @@ def replace_punctuation(string):
     string = re.sub(r'[′׳]', "'", string)
     string = re.sub(r'[″״]', '"', string)
     return string
+    
+##########################################
+# transliteration/romanization and reverse
+##########################################
 
 translit_table = [ # all are precombined
     ('א', ''),
@@ -175,6 +186,7 @@ def detransliterate(string):
 
     return string
 
+# for automatic segmentation using German
 def romanise_german(text):
     rom = {"א": "",    "אַ": "a", "אָ": "o",
            "ב": "b",   "בּ": "b", "בֿ": "w",
@@ -219,6 +231,10 @@ def romanise_german(text):
     output = re.sub(r"([^aeiou])([nl])\b", r"\1e\2", output)
 
     return output
+
+##################################################
+# for TTS: respell orthographic words phonetically
+##################################################
 
 def respell_loshn_koydesh(text):
     url = 'https://raw.githubusercontent.com/ibleaman/loshn-koydesh-pronunciation/master/orthographic-to-phonetic.txt'
@@ -270,7 +286,10 @@ def respell_loshn_koydesh(text):
         text = re.sub(r'(?<![אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])' + key + r'(?![\'אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])', mistakes[key], text)
     
     return text
-    
+#######################################
+# convert YIVO orthography into Hasidic
+#######################################
+
 def hasidify(text):
     # TODO
     
