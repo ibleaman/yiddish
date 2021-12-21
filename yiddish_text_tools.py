@@ -175,7 +175,10 @@ reverse_translit_table = [ # to precombined
 reverse_translit_exceptions = [
     (r'\bfarey', 'פֿאַראײ'), # פֿאַראײניקט, פֿאַראײביקן
     (r'\bantiintel', 'אַנטיאינטעל'), # אַנטיאינטעלעקטואַליזם
-    (r'(el|ib)tst(e|er|n)?\b', 'עלטסט'), # עלטסטער, קעלטסטער, באַליבטסטן
+    (r'\beltst', 'עלטסט'),
+    (r'\bkeltst', 'קעלטסט'),
+    (r'\bbalibtst', 'באַליבטסט'),
+    (r'geburts', 'געבורטס'),
 ]
 
 # note: output uses precombined Unicode characters
