@@ -371,63 +371,61 @@ reformatting = [
     ('[“״″‟„]', '"'),
     ('׳', "'"),
 ]
-
-def hasidify_word(word):
-    for key, value in whole_word_variants.items():
-        if re.match(f'^{key}$', word):
-            return re.sub(f'^{key}$', value, word)
-
-    # if didn't already return...
-    for lkizm in lkizmen:
-        word = re.sub(f'(?!<[בהל]|^){lkizm}', f"'{lkizm}", word)
-        word = re.sub(f'{lkizm}(?!ים|ימ|ות|$)', f"{lkizm}'", word)
-            
-    for key, value in prefix_variants.items():
-        word = re.sub(f'^{key}', value, word)
-            
-    for key, value in suffix_variants.items():
-        word = re.sub(f'{key}$', value, word)
-            
-    for key, value in anywhere_variants.items():
-        word = re.sub(key, value, word)
-            
-    for exception in ik_exceptions:
-        word = re.sub(f'{exception}(?!Δ)', f'{exception}Δ', word)
-    for exception in lekh_exceptions:
-        word = re.sub(f'{exception}(?!Δ)', f'{exception}Δ', word)
-        
-    word = re.sub('(?<!^)יק(?!Δ)(?=$|ער|ע|ן|סט|ס|ט|ערע|ערן|ערס|סטע|סטער|סטן|סטנס|ונג|ונגען)(?!Δ)', 'יג', word)
-    word = re.sub('(?<!^)לעך(?!Δ)', 'ליך', word)
-    word = re.sub('(?<!^)לעכ(?!Δ)(?=$|ע|ער|ן|ס|ט|סט|ערע|ערן|ערס|סטע|סטער|סטן|סטנס|קײט|קײטן)(?!Δ)', 'ליכ', word)
-    
-    return word.replace('Δ', '')
-    
     
 def hasidify(text):
     
     text = replace_with_precombined(text)
     text = re.split(r"([^אאַאָבבֿגדהווּװױזחטייִײײַכּכךלמםנןסעפּפֿףצץקרששׂתּתA-Za-z'])", text)
     
-    new_text = []
-    
-    for token in text:
-        if re.search(r"[^אאַאָבבֿגדהווּװױזחטייִײײַכּכךלמםנןסעפּפֿףצץקרששׂתּתA-Za-z']", token):
-            new_text.append(token)    
-        else:
-            new_text.append(hasidify_word(token))
-            
-    new_text = ''.join(new_text)
-    
-    for key, value in word_group_variants.items():
-        new_text = re.sub(key, value, new_text)
-        
-    for pair in reformatting:
-        new_text = re.sub(pair[0], pair[1], new_text)
-        
-    for key, value in last_minute_fixes.items():
-        new_text = re.sub(key, value, new_text)
+    # add 'Γ' as a word/token boundary symbol
+    # rationale: the alternative is to iterate over tokens, which takes forever
+    text = 'Γ'.join(text)
+    text = 'Γ' + text + 'Γ'
 
-    new_text = strip_diacritics(new_text)
+    # perform respellings
+    for key, value in whole_word_variants.items():
+        text = re.sub(f'(?<=Γ){key}(?=Γ)', value, text)
             
-    return new_text
+    for lkizm in lkizmen:
+        text = re.sub(f"(?<![בהל'Γ]){lkizm}", f"'{lkizm}", text)
+        text = re.sub(f"{lkizm}(?!ים|ימ|ות|'|Γ)", f"{lkizm}'", text)
+            
+    for key, value in prefix_variants.items():
+        text = re.sub(f'(?<=Γ){key}', value, text)
+            
+    for key, value in suffix_variants.items():
+        text = re.sub(f'{key}(?=Γ)', value, text)
+            
+    for key, value in anywhere_variants.items():
+        text = re.sub(key, value, text)
+    
+    # add 'Δ' to show that exceptions shouldn't be processed by -ig/-likh rule
+    for exception in ik_exceptions:
+        text = re.sub(f'{exception}(?!Δ)', f'{exception}Δ', text)
+    for exception in lekh_exceptions:
+        text = re.sub(f'{exception}(?!Δ)', f'{exception}Δ', text)
+    
+    # perform -ig and -likh respellings, ignoring the 'Δ'-ed exceptions
+    text = re.sub('(?<!Γ)יק(?!Δ)(?=Γ|ער|ע|ן|סט|ס|ט|ערע|ערן|ערס|סטע|סטער|סטן|סטנס|ונג|ונגען)(?!Δ)', 'יג', text)
+    text = re.sub('(?<!Γ)לעך(?!Δ)', 'ליך', text)
+    text = re.sub('(?<!Γ)לעכ(?!Δ)(?=Γ|ע|ער|ן|ס|ט|סט|ערע|ערן|ערס|סטע|סטער|סטן|סטנס|קײט|קײטן)(?!Δ)', 'ליכ', text)
+    
+    # remove Greek letters
+    text = text.replace('Δ', '')
+    text = text.replace('Γ', '')
+    
+    # perform other replacements involving multiple words
+    for key, value in word_group_variants.items():
+        text = re.sub(key, value, text)
+    
+    # final respellings and fixing mistakes
+    for pair in reformatting:
+        text = re.sub(pair[0], pair[1], text)
+    
+    for key, value in last_minute_fixes.items():
+        text = re.sub(key, value, text)
+    
+    text = strip_diacritics(text)
+    
+    return text
     
