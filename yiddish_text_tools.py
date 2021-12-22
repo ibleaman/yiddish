@@ -3,6 +3,7 @@
 
 import re
 from urllib.request import urlopen
+import pandas as pd
 
 ##########
 # encoding
@@ -35,7 +36,7 @@ def replace_with_precombined(string):
 def replace_with_decomposed(string):
     for pair in pairs:
         string = re.sub(pair[1], pair[0], string)
-    string = re.sub('ייַ', 'ײַ', string)
+    string = re.sub('ייַ', 'ײַ', string) # the double yud char exists ONLY in this context
     string = re.sub('בּ', 'ב', string) # diacritic not used in YIVO
     string = re.sub('בּ', 'ב', string)
     return string
@@ -45,6 +46,10 @@ def replace_punctuation(string):
     string = re.sub(r'[′׳]', "'", string) # more common punct for abbreviations
     string = re.sub(r'[″״]', '"', string)
     return string
+
+def strip_diacritics(string): # and replace with decomposed
+    string = replace_with_decomposed(string)
+    return re.sub(r'[ִַַָּּּּֿֿׂ]', '', string)
     
 ##########################################
 # transliteration/romanization and reverse
@@ -308,9 +313,121 @@ def respell_loshn_koydesh(text):
     
 #######################################
 # convert YIVO orthography into Hasidic
-#######################################
 
-def hasidify(text):
-    # TODO
+# note: all replacements are based on
+# looking for precombined characters
+#######################################
+hasidifier_lexicon = pd.ExcelFile('https://docs.google.com/spreadsheets/d/1x_KLOaUfnCBVVWEb523QIJZIvk65Pp0ly9MPMVLUVOI/export?format=xlsx')
+
+whole_word_variants = pd.read_excel(hasidifier_lexicon, 'whole_word_variants')
+whole_word_variants = dict(zip([replace_with_precombined(word) for word in whole_word_variants['Find']], [replace_with_precombined(word) for word in whole_word_variants['Replace']]))
+
+prefix_variants = pd.read_excel(hasidifier_lexicon, 'prefix_variants')
+prefix_variants = dict(zip([replace_with_precombined(word) for word in prefix_variants['Find']], [replace_with_precombined(word) for word in prefix_variants['Replace']]))
+
+suffix_variants = pd.read_excel(hasidifier_lexicon, 'suffix_variants')
+suffix_variants = dict(zip([replace_with_precombined(word) for word in suffix_variants['Find']], [replace_with_precombined(word) for word in suffix_variants['Replace']]))
+
+anywhere_variants = pd.read_excel(hasidifier_lexicon, 'anywhere_variants')
+anywhere_variants = dict(zip([replace_with_precombined(word) for word in anywhere_variants['Find']], [replace_with_precombined(word) for word in anywhere_variants['Replace']]))
+
+lkizmen = pd.read_excel(hasidifier_lexicon, 'lkizmen')
+lkizmen = lkizmen['Words'].tolist()
+lkizmen = [replace_with_precombined(word) for word in lkizmen]
+
+word_group_variants = pd.read_excel(hasidifier_lexicon, 'word_group_variants')
+word_group_variants = dict(zip([replace_with_precombined(word) for word in word_group_variants['Find']], [replace_with_precombined(word) for word in word_group_variants['Replace']]))
+
+ik_exceptions = pd.read_excel(hasidifier_lexicon, 'ik_exceptions')
+ik_exceptions = ik_exceptions['Words'].tolist()
+ik_exceptions = [replace_with_precombined(word) for word in ik_exceptions]
+
+lekh_exceptions = pd.read_excel(hasidifier_lexicon, 'lekh_exceptions')
+lekh_exceptions = lekh_exceptions['Words'].tolist()
+lekh_exceptions = [replace_with_precombined(word) for word in lekh_exceptions]
+
+last_minute_fixes = pd.read_excel(hasidifier_lexicon, 'last_minute_fixes')
+last_minute_fixes = dict(zip([replace_with_precombined(word) for word in last_minute_fixes['Find']], [replace_with_precombined(word) for word in last_minute_fixes['Replace']]))
+
+reformatting = [
+    ('וּװוּ', 'ואוואו'),
+    ('ײיִ', 'ייאי'),
+    ('ײַיִ', 'ייאי'), # frier, hebreish - no alef in HY forums AFAIK
+    ('וּװ', 'ואוו'),
+    ('װוּ', 'וואו'),
+    ('װױ', 'וואוי'),
+    ('יִו', 'יאו'),
+    ('ויִ', 'ואי'),
+    ('וּיִ', 'ואי'),
+    ('יִוּ', 'יאו'),
+    ('יִיִ', 'יאי'),
+    ('וּוּ', 'ואו'),
+    ('ױ(ו|וּ)', 'ויאו'),
+    ('װ', 'וו'),
+    ('ױ', 'וי'),
+    ('ײ', 'יי'),
+    ('ײַ', 'יי'),
+    ('־', '-'),
+    ('[“״″‟„]', '"'),
+    ('׳', "'"),
+]
+
+def hasidify_word(word):
+    for key, value in whole_word_variants.items():
+        if re.match(f'^{key}$', word):
+            return re.sub(f'^{key}$', value, word)
+
+    # if didn't already return...
+    for lkizm in lkizmen:
+        word = re.sub(f'(?!<[בהל]|^){lkizm}', f"'{lkizm}", word)
+        word = re.sub(f'{lkizm}(?!ים|ימ|ות|$)', f"{lkizm}'", word)
+            
+    for key, value in prefix_variants.items():
+        word = re.sub(f'^{key}', value, word)
+            
+    for key, value in suffix_variants.items():
+        word = re.sub(f'{key}$', value, word)
+            
+    for key, value in anywhere_variants.items():
+        word = re.sub(key, value, word)
+            
+    for exception in ik_exceptions:
+        word = re.sub(f'{exception}(?!Δ)', f'{exception}Δ', word)
+    for exception in lekh_exceptions:
+        word = re.sub(f'{exception}(?!Δ)', f'{exception}Δ', word)
+        
+    word = re.sub('(?<!^)יק(?!Δ)(?=$|ער|ע|ן|סט|ס|ט|ערע|ערן|ערס|סטע|סטער|סטן|סטנס|ונג|ונגען)(?!Δ)', 'יג', word)
+    word = re.sub('(?<!^)לעך(?!Δ)', 'ליך', word)
+    word = re.sub('(?<!^)לעכ(?!Δ)(?=$|ע|ער|ן|ס|ט|סט|ערע|ערן|ערס|סטע|סטער|סטן|סטנס|קײט|קײטן)(?!Δ)', 'ליכ', word)
     
-    return text
+    return word.replace('Δ', '')
+    
+    
+def hasidify(text):
+    
+    text = replace_with_precombined(text)
+    text = re.split(r"([^אאַאָבבֿגדהווּװױזחטייִײײַכּכךלמםנןסעפּפֿףצץקרששׂתּתA-Za-z'])", text)
+    
+    new_text = []
+    
+    for token in text:
+        if re.search(r"[^אאַאָבבֿגדהווּװױזחטייִײײַכּכךלמםנןסעפּפֿףצץקרששׂתּתA-Za-z']", token):
+            new_text.append(token)    
+        else:
+            new_text.append(hasidify_word(token))
+            
+    new_text = ''.join(new_text)
+    
+    for key, value in word_group_variants.items():
+        new_text = re.sub(key, value, new_text)
+        
+    for pair in reformatting:
+        new_text = re.sub(pair[0], pair[1], new_text)
+        
+    for key, value in last_minute_fixes.items():
+        new_text = re.sub(key, value, new_text)
+
+    new_text = strip_diacritics(new_text)
+            
+    return new_text
+    
