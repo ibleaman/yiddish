@@ -42,7 +42,7 @@ def replace_with_decomposed(string):
 
 def replace_punctuation(string):
     string = re.sub(r"-", r"־", string) # YIVO-style hyphen
-    string = re.sub(r'[′׳]', "'", string)
+    string = re.sub(r'[′׳]', "'", string) # more common punct for abbreviations
     string = re.sub(r'[″״]', '"', string)
     return string
     
@@ -125,7 +125,7 @@ reverse_translit_table = [ # to precombined
     ('oy', 'ױ'),
     ('zh', 'זש'),
     ('kh', 'כ'),
-    ('sh', 'ש'),
+    ('sh', 'ש'), # דײַטש, *דײַצה
     ('ts', 'צ'),
     ('ia', 'יִאַ'), # ?
     ('ai', 'אַיִ'), # יודאַיִסטיק
@@ -169,16 +169,31 @@ reverse_translit_table = [ # to precombined
     (r'ם(\'|")', r'מ\1'),
     (r'ן(\'|")', r'נ\1'),
     (r'ף(\'|")', r'פֿ\1'),
-    (r'ץ(\'|")', r'צ\1'), # to do: fix farEYNikt etc.
+    (r'ץ(\'|")', r'צ\1'),
 ]
 
 reverse_translit_exceptions = [
+    # unpredicted shtumer alef
     (r'\bfarey', 'פֿאַראײ'), # פֿאַראײניקט, פֿאַראײביקן
     (r'\bantiintel', 'אַנטיאינטעל'), # אַנטיאינטעלעקטואַליזם
+    
+    # ts != צ
     (r'\beltst', 'עלטסט'),
     (r'\bkeltst', 'קעלטסט'),
     (r'\bbalibtst', 'באַליבטסט'),
-    (r'geburts', 'געבורטס'),
+    (r'\bgeburts', 'געבורטס'),
+    (r'\barbets', 'אַרבעטס'),
+    (r'\bgots', 'גאָטס'),
+    (r'\bhaltst', 'האַלטסט'),
+    
+    # kh != כ
+    (r'\bpikhol', 'פּיקהאָל'), # פּיקהאָלץ, פּיקהאָלצן
+    (r'\btsurikhalt', 'צוריקהאַלט'), # צוריקהאַלטן etc.
+    
+    # sh != ש
+    (r'\boysh(?!ers?\b|vits(er)?\b)', 'אױסה'), # the only exceptions to oysh = אױסה
+                                               # עושר, עושרס, אױשװיץ, אױשװיצער
+    (r'\baroysh', 'אַרױסה'),
 ]
 
 # note: output uses precombined Unicode characters
@@ -190,7 +205,7 @@ def detransliterate(string):
 
     return string
 
-# for automatic segmentation using German
+# for automatic segmentation using German; code by Samuel Lo
 def romanise_german(text):
     rom = {"א": "",    "אַ": "a", "אָ": "o",
            "ב": "b",   "בּ": "b", "בֿ": "w",
@@ -231,8 +246,8 @@ def romanise_german(text):
     output = re.sub(r"scht([aeiour])", r"st\1", output)
     output = re.sub(r"\bpun\b", r"fun", output)
     output = re.sub(r"eup", r"euf", output)
-    output = re.sub(r"\bi([aeiou])", r"j\1", output)
-    output = re.sub(r"([^aeiou])([nl])\b", r"\1e\2", output)
+    output = re.sub(r"\bi([aeiou])", r"j\1", output) # Isaac's addition
+    output = re.sub(r"([^aeiou])([nl])\b", r"\1e\2", output) # Isaac's addition
 
     return output
 
@@ -290,6 +305,7 @@ def respell_loshn_koydesh(text):
         text = re.sub(r'(?<![אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])' + key + r'(?![\'אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])', mistakes[key], text)
     
     return text
+    
 #######################################
 # convert YIVO orthography into Hasidic
 #######################################
