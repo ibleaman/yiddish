@@ -62,6 +62,8 @@ translit_table = [ # all are precombined
     ('ב', 'b'),
     ('בֿ', 'v'),
     ('ג', 'g'),
+    ('דזש', 'dzh'),
+    # ('דז', 'dz'), # phonemic status doubtful
     ('ד', 'd'),
     ('ה', 'h'),
     ('ו', 'u'),
@@ -71,6 +73,7 @@ translit_table = [ # all are precombined
     ('זש', 'zh'),
     ('ז', 'z'),
     ('ח', 'kh'),
+    ('טש', 'tsh'),
     ('ט', 't'),
     ('י', 'j'),
     ('יִ', 'i'),
