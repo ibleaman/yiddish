@@ -484,7 +484,7 @@ lekh_exceptions = lekh_exceptions['Words'].tolist()
 lekh_exceptions = [replace_with_precombined(word) for word in lekh_exceptions]
 
 last_minute_fixes = pd.read_excel(hasidifier_lexicon, 'last_minute_fixes')
-last_minute_fixes = dict(zip([replace_with_precombined(word) for word in last_minute_fixes['Find']], [replace_with_precombined(word) for word in last_minute_fixes['Replace']]))
+last_minute_fixes = dict(zip(last_minute_fixes['Find'], last_minute_fixes['Replace']))
 
 reformatting = [
     ('וּװוּ', 'ואוואו'),
