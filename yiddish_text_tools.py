@@ -33,9 +33,14 @@ def replace_with_precombined(string):
     string = re.sub('בּ', 'ב', string)
     return string
 
-def replace_with_decomposed(string):
+# When vov_yud==True, these will be preserved as precombined chars:
+#      װ, ײ, ױ
+def replace_with_decomposed(string, vov_yud=False):
     for pair in pairs:
-        string = re.sub(pair[1], pair[0], string)
+        if vov_yud and pair[1] in ['װ', 'ױ', 'ײ']:
+            pass
+        else:
+            string = re.sub(pair[1], pair[0], string)
     string = re.sub('ייַ', 'ײַ', string) # the double yud char exists ONLY in this context
     string = re.sub('בּ', 'ב', string) # diacritic not used in YIVO
     string = re.sub('בּ', 'ב', string)
@@ -55,6 +60,31 @@ def strip_diacritics(string): # and replace with decomposed
 # transliteration/romanization and reverse
 ##########################################
 
+
+#########################################
+# import loshn-koydesh pronunciation list
+#########################################
+
+respellings_url = 'https://raw.githubusercontent.com/ibleaman/loshn-koydesh-pronunciation/master/orthographic-to-phonetic.txt'
+respellings_list = urlopen(respellings_url).read().decode('utf-8')
+respellings_list = respellings_list.split('\n')
+respellings_list = [line for line in respellings_list if line]
+
+lk = {} # orthographic to phonetic
+reverse_lk = {} # phonetic to orthographic
+
+for line in respellings_list:
+    key = replace_with_precombined(line.split('\t')[0])
+    key = replace_punctuation(key)
+    entries = replace_with_precombined(line.split('\t')[1])
+    entries = replace_punctuation(entries)
+    if key not in lk:
+        lk[key] = entries.split(',')
+    for entry in entries.split(','):
+        if entry not in reverse_lk:
+            reverse_lk[entry] = key
+            
+            
 translit_table = [ # all are precombined
     ('א', ''),
     ('אַ', 'a'),
@@ -103,8 +133,20 @@ translit_table = [ # all are precombined
     ('־', '-'),
 ]
 
-def transliterate(string):
+# if loshn_koydesh, look up string in LK dictionary
+def transliterate(string, loshn_koydesh=False):
     romanized = replace_with_precombined(string)
+    
+    if loshn_koydesh:
+        tokens = re.findall(r"[אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־]+|[^אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־]", romanized)
+        new_tokens = []
+        for token in tokens:
+            if token in lk:
+                new_tokens.append(lk[token][0].replace('־', '-'))
+            else:
+                new_tokens.append(token)
+            
+        romanized = ''.join(new_tokens)
 
     for pair in translit_table:
         romanized = re.sub(pair[0], pair[1], romanized)
@@ -112,6 +154,7 @@ def transliterate(string):
     romanized = re.sub(r'j$', 'i', romanized)
     romanized = re.sub(r'j(?![aeiou])', 'i', romanized)
     romanized = re.sub('j', 'y', romanized)
+        
     return romanized
 
 reverse_translit_table = [ # to precombined
@@ -181,22 +224,114 @@ reverse_translit_table = [ # to precombined
 ]
 
 reverse_translit_exceptions = [
+
     # unpredicted shtumer alef
     (r'\bfarey', 'פֿאַראײ'), # פֿאַראײניקט, פֿאַראײביקן
     (r'\bantiintel', 'אַנטיאינטעל'), # אַנטיאינטעלעקטואַליזם
+    (r'\bbizitst', 'ביזאיצט'), # ביזאיצטיקער
+    (r'\boybnoy', 'אױבנאױ'), # אױבנאױף
+    (r'\boysib', 'אױסאיב'), # אױסאיבן
+    (r'geibt', 'געאיבט'),
+    (r'geiblt', 'געאיבלט'),
+    (r'tsuibn\b', 'צואיבן'),
+    (r'\boyseydl', 'אױסאײדל'), # אױסאײדלען
+    (r'geeydl', 'געאײדל'),
+    (r'tsueydl', 'צואײדל'),
+    (r'\bayneyg', 'אײַנאײג'), # אײַנאײגענען
+    (r'geey', 'געאײ'),
+    (r'tsuey', 'צואײ'),
+    (r'geindlt', 'געאינדלט'), # surfing
+    (r'\bumoys', 'אומאױס'), # אומאױסשעפּלעך
+    (r'\bumayn', 'אומאײַנ'), # אומאײַנגענעם
+    (r'\bureynikl', 'אוראײניקל'),
+    (r'\bbaayn', 'באַאײַנ'), # באַאײַנדרוקן, באַאײַנפֿלוסן
+    (r'geayn', 'געאײַנ'), # געאײַנפֿלוסט
+    (r'tsuayn', 'צואײַנ'),
+    (r'durkhayl', 'דורכאײַל'), # דורכאײַלן
+    (r'farbayayl', 'פֿאַרבײַאײַל'), # דורכאײַלן
+    (r'geay', 'געאײַ'),
+    (r'tsuayl', 'צואײַל'), # געאײַנפֿלוסט
+    (r'geirtst', 'געאירצט'),
+    (r'tsuirtsn\b', 'צואירצן'),
+    (r'grobayz', 'גראָבאײַז'), # גראָבאײַזנס
+    (r'presayz', 'פּרעסאײַז'),
+    (r'halbindzl', 'האַלבאינדזל'),
+    (r'hinteroyg', 'הינטעראױג'), # הינטעראױגיק
+    (r'zunoyfgang', 'זונאױפֿגאַנג'),
+    (r'moyleyzl', 'מױלאײזל'),
+    (r'\bfarum', 'פֿאַראומ'), # פֿאַראומװערדיקן, פֿאַראומעטיקטע, פֿאַראומרײניקן
+    (r'\bfarur', 'פֿאַראור'), # פֿאַראַורטײל
+    (r'\bforur', 'פֿאָראור'), # פֿאָראורטל
+    (r'\bfaribl', 'פֿאַראיבל'),
+    (r'\bfarinteres', 'פֿאַראינטערעס'), # פֿאַראינטערעסירן
+    
+    # ay != ײַ
+    (r'\brayon\b', 'ראַיאָן'),
+    (r'\brayonen\b', 'ראַיאָנען'),
+    (r'bayornt', 'באַיאָרנט'),
+    (r'bayort', 'באַיאָרט'),
+    (r'mayontik', 'מאַיאָנטיק'),
+    (r'mayontkes', 'מאַיאָנטקעס'),
+    (r'mayonez', 'מאַיאָנעז'),
+    (r'mayestet', 'מאַיעסטעט'),
+    (r'payats\b', 'פּאַיאַץ'),
+    (r'payatsn\b', 'פּאַיאַצן'),
+    (r'payatseve', 'פּאַיאַצעװע'),
+    (r'farayorik', 'פֿאַראַיאָריק'),
+    (r'\bkayor', 'קאַיאָר'),
+    (r'\bayed', 'אַיעד'), # אַיעדער
+    (r'\bayo\b', 'אַיאָ'),
+    
+    # ey != ײ
+    (r'geyogt', 'געיאָגט'),
+    (r'geyeg', 'געיעג'),
+    (r'\bgeyog\b', 'געיאָג'),
+    (r'geyavet', 'געיאַװעט'),
+    (r'geyadet', 'געיאַדעט'),
+    (r'geyopet', 'געיאָפּעט'),
+    (r'geyabede', 'געיאַבעדע'), # געיאַבעדע(װע)ט
+    (r'geyakhmert', 'געיאַכמערט'),    
+    (r'tseyakhmert', 'צעיאַכמערט'),    
+    (r'tseyakhmet', 'צעיאַכמעט'),    
+    (r'geyodlt', 'געיאָדלט'),
+    (r'geyomer', 'געיאָמער'),
+    (r'tseyomer', 'צעיאָמער'),
+    (r'geyutshet', 'געיוטשעט'),
+    (r'geyoyr', 'געיױר'), # געיױרענע
+    (r'\bgeyet(\b|er|e|n|s|ns)', r'געיעט\1'),
+    (r'geyentst', 'געיענצט'),
+    (r'geyenket', 'געיענקעט'),
+    (r'geyekt', 'געיעקט'),
+    (r'\bgeyert\b', 'געיערט'),
+    (r'pleyade', 'פּלעיאַדע'),
+    
+    # oy != ױ
+    (r'proyekt', 'פּראָיעקט'), # פּראָיעקטאָר
+    (r'umloyal', 'אומלאָיאַל'),
+    (r'loyal', 'לאָיאַל'),
+    (r'paranoye', 'פּאַראַנאָיע'),
     
     # ts != צ
+    (r'tstu\b', 'טסטו'),
     (r'\beltst', 'עלטסט'),
     (r'\bkeltst', 'קעלטסט'),
     (r'\bbalibtst', 'באַליבטסט'),
     (r'\bgeburts', 'געבורטס'),
     (r'\barbets', 'אַרבעטס'),
+    (r'\barbayts', 'אַרבײַטס'),
     (r'\bgots', 'גאָטס'),
-    (r'\bhaltst', 'האַלטסט'),
+    (r'\bgeshefts', 'געשעפֿטס'),
+    (r'(\b|ba|far|der)haltst', r'\1האַלטסט'),
+    (r'(\b|tse)shpaltst', r'\1שפּאַלטסט'),
+    (r'(\b|tse|far)shpreytst', r'\1שפּרײטסט'),
+    (r'shpetst', 'שפּעטסט'),
+    (r'\brekhts\b', 'רעכטס'),
+    (r'du shatst', 'דו שאַטסט'), # cf. ער שאַצט
     
     # kh != כ
     (r'\bpikhol', 'פּיקהאָל'), # פּיקהאָלץ, פּיקהאָלצן
     (r'\btsurikhalt', 'צוריקהאַלט'), # צוריקהאַלטן etc.
+    (r'\bkrikhalt', 'קריקהאַלט'),
     
     # sh != ש
     (r'\boysh(?!ers?\b|vits(er)?\b)', 'אױסה'), # the only exceptions to oysh = אױסה
@@ -205,12 +340,25 @@ reverse_translit_exceptions = [
 ]
 
 # note: output uses precombined Unicode characters
-def detransliterate(string):
+# if loshn_koydesh, look up string in LK dictionary
+def detransliterate(string, loshn_koydesh=False):
+    string = string.lower()
     for pair in reverse_translit_exceptions:
         string = re.sub(pair[0], pair[1], string)
     for pair in reverse_translit_table:
         string = re.sub(pair[0], pair[1], string)
-
+        
+    if loshn_koydesh:
+        tokens = re.findall(r"[\w\-־]+|[^\w\-־]", string)
+        new_tokens = []
+        for token in tokens:
+            if token.replace('-', '־') in reverse_lk:
+                new_tokens.append(reverse_lk[token].replace('־', '-'))
+            else:
+                new_tokens.append(token)
+            
+        string = ''.join(new_tokens)
+            
     return string
 
 # for automatic segmentation using German; code by Samuel Lo
@@ -264,20 +412,6 @@ def romanise_german(text):
 ##################################################
 
 def respell_loshn_koydesh(text):
-    url = 'https://raw.githubusercontent.com/ibleaman/loshn-koydesh-pronunciation/master/orthographic-to-phonetic.txt'
-    respellings_list = urlopen(url).read().decode('utf-8')
-    respellings_list = respellings_list.split('\n')
-    respellings_list = [line for line in respellings_list if line]
-    
-    lk = {}
-    for line in respellings_list:
-        key = replace_with_precombined(line.split('\t')[0])
-        key = replace_punctuation(key)
-        entries = replace_with_precombined(line.split('\t')[1])
-        entries = replace_punctuation(entries)
-        if key not in lk:
-            lk[key] = entries.split(',')
-            
     # loop over keys, in reverse order from longest keys to shortest
     for key in sorted(list(lk.keys()), key=len, reverse=True):
         # skip Germanic homographs, which are usually phonetic
@@ -370,7 +504,7 @@ reformatting = [
     ('ױ', 'וי'),
     ('ײ', 'יי'),
     ('ײַ', 'יי'),
-    ('־', '-'),
+    # ('־', '-'),
     ('[“״″‟„]', '"'),
     ('׳', "'"),
 ]
