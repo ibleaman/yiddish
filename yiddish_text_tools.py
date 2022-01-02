@@ -541,16 +541,16 @@ def hasidify(text):
         text = re.sub(f'{exception}(?!Δ)', f'{exception}Δ', text)
     for exception in lekh_exceptions:
         text = re.sub(f'{exception}(?!Δ)', f'{exception}Δ', text)
-    
+
     # perform -ig and -likh respellings, ignoring the 'Δ'-ed exceptions
-    text = re.sub('(?<!Γ)יק(?!Δ)(?=Γ|ער|ע|ן|סט|ס|ט|ערע|ערן|ערס|סטע|סטער|סטן|סטנס|ונג|ונגען)(?!Δ)', 'יג', text)
-    text = re.sub('(?<!Γ)לעך(?!Δ)', 'ליך', text)
-    text = re.sub('(?<!Γ)לעכ(?!Δ)(?=Γ|ע|ער|ן|ס|ט|סט|ערע|ערן|ערס|סטע|סטער|סטן|סטנס|קײט|קײטן)(?!Δ)', 'ליכ', text)
-    
+    text = re.sub('(?<![ΓΔ])יק(?!Δ)(?=Γ|ערΓ|עΓ|ןΓ|סטΓ|סΓ|טΓ|ערעΓ|ערןΓ|ערסΓ|סטעΓ|סטערΓ|סטןΓ|סטנסΓ|ונגΓ|ונגען)(?!Δ)', 'יג', text)
+    text = re.sub('(?<![ΓΔ])לעך(?!Δ)', 'ליך', text)
+    text = re.sub('(?<![ΓΔ])לעכ(?!Δ)(?=Γ|עΓ|ערΓ|ןΓ|סΓ|טΓ|סטΓ|ערעΓ|ערןΓ|ערסΓ|סטעΓ|סטערΓ|סטןΓ|סטנסΓ|קײטΓ|קײטן)(?!Δ)', 'ליכ', text)
+
     # remove Greek letters
     text = text.replace('Δ', '')
     text = text.replace('Γ', '')
-    
+
     # perform other replacements involving multiple words
     for key, value in word_group_variants.items():
         text = re.sub(key, value, text)
