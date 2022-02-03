@@ -1,4 +1,0 @@
-Isaac L. Bleaman <bleaman@berkeley.edu>
-(additional authors to be added here)
-
-ILB wrote many of these functions for personal use, in a few different programming languages, over the years. They were put together in a single .py file in 2021 for REYD, a Yiddish text-to-speech project, and then packaged as a standalone Python library in 2022.
