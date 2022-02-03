@@ -1,9 +1,10 @@
-# Functions for processing Yiddish text, written in the YIVO orthography
+# yiddish
+# A Python library for processing Yiddish text
 # Author: Isaac L. Bleaman (bleaman@berkeley.edu)
 
 import re
 from urllib.request import urlopen
-import pandas as pd
+import csv
 
 ##########
 # encoding
@@ -83,7 +84,10 @@ for line in respellings_list:
     for entry in entries.split(','):
         if entry not in reverse_lk:
             reverse_lk[entry] = key
-            
+
+germanic_semitic_homographs = ["אין", "צום", "בין", "ברי", "מיד", "קין", "שער", "מעגן", "צו", "מאַנס", "טוען", "מערער"]
+
+less_common_lk_pronunciations = ["אַדױשעם", "כאַנוקע", "גדױלע", "כאַװײרע", "מיכיע", "כאָװער", "אָרעװ", "מאָסער", "כיִעס", "זקאָנים", "נעװאָלע", "מאַשלעם", "כפֿאָצים", "כאַכאָמע", "טאַנאָיִם", "יאָסעף", "יאָסעפֿס", "יאָסעפֿן"]
             
 translit_table = [ # all are precombined
     ('א', ''),
@@ -141,8 +145,11 @@ def transliterate(string, loshn_koydesh=False):
         tokens = re.findall(r"[אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־]+|[^אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־]", romanized)
         new_tokens = []
         for token in tokens:
-            if token in lk:
-                new_tokens.append(lk[token][0].replace('־', '-'))
+            if token in lk and token not in germanic_semitic_homographs:
+                if lk[token][0] in less_common_lk_pronunciations and len(lk[token]) > 1:
+                    new_tokens.append(lk[token][1].replace('־', '-'))
+                else:
+                    new_tokens.append(lk[token][0].replace('־', '-'))
             else:
                 new_tokens.append(token)
             
@@ -411,13 +418,15 @@ def romanise_german(text):
 # for TTS: respell orthographic words phonetically
 ##################################################
 
+# Note: input text WILL become precombined
 def respell_loshn_koydesh(text):
+    text = replace_with_precombined(text)
     # loop over keys, in reverse order from longest keys to shortest
     for key in sorted(list(lk.keys()), key=len, reverse=True):
         # skip Germanic homographs, which are usually phonetic
-        if key not in ["אין", "צום", "בין", "ברי", "מיד", "קין", "שער", "מעגן", "צו", "מאַנס", "טוען", "מערער"]:
-            # skip less common LK variants, in favor of more common ones
-            if lk[key][0] in ["אַדױשעם", "כאַנוקע", "גדױלע", "כאַװײרע", "מיכיע", "כאָװער", "אָרעװ", "מאָסער", "כיִעס", "זקאָנים", "נעװאָלע", "מאַשלעם", "כפֿאָצים", "כאַכאָמע", "טאַנאָיִם", "יאָסעף", "יאָסעפֿס", "יאָסעפֿן"] and len(lk[key]) > 1:
+        if key not in germanic_semitic_homographs:
+            # skip less common LK pronunciations, in favor of more common ones
+            if lk[key][0] in less_common_lk_pronunciations and len(lk[key]) > 1:
                 replacement = lk[key][1]
             else:
                 replacement = lk[key][0]
@@ -454,37 +463,34 @@ def respell_loshn_koydesh(text):
 # note: all replacements are based on
 # looking for precombined characters
 #######################################
-hasidifier_lexicon = pd.ExcelFile('https://docs.google.com/spreadsheets/d/1x_KLOaUfnCBVVWEb523QIJZIvk65Pp0ly9MPMVLUVOI/export?format=xlsx')
+hasidify_lexicon = 'https://raw.githubusercontent.com/ibleaman/hasidify_lexicon/master/'
 
-whole_word_variants = pd.read_excel(hasidifier_lexicon, 'whole_word_variants')
-whole_word_variants = dict(zip([replace_with_precombined(word) for word in whole_word_variants['Find']], [replace_with_precombined(word) for word in whole_word_variants['Replace']]))
+whole_word_variants = list(csv.reader(urlopen(hasidify_lexicon + 'whole_word_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
+whole_word_variants = dict(zip([replace_with_precombined(row[0]) for row in whole_word_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in whole_word_variants if row[1] != 'Replace']))
 
-prefix_variants = pd.read_excel(hasidifier_lexicon, 'prefix_variants')
-prefix_variants = dict(zip([replace_with_precombined(word) for word in prefix_variants['Find']], [replace_with_precombined(word) for word in prefix_variants['Replace']]))
+prefix_variants = list(csv.reader(urlopen(hasidify_lexicon + 'prefix_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
+prefix_variants = dict(zip([replace_with_precombined(row[0]) for row in prefix_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in prefix_variants if row[1] != 'Replace']))
 
-suffix_variants = pd.read_excel(hasidifier_lexicon, 'suffix_variants')
-suffix_variants = dict(zip([replace_with_precombined(word) for word in suffix_variants['Find']], [replace_with_precombined(word) for word in suffix_variants['Replace']]))
+suffix_variants = list(csv.reader(urlopen(hasidify_lexicon + 'suffix_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
+suffix_variants = dict(zip([replace_with_precombined(row[0]) for row in suffix_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in suffix_variants if row[1] != 'Replace']))
 
-anywhere_variants = pd.read_excel(hasidifier_lexicon, 'anywhere_variants')
-anywhere_variants = dict(zip([replace_with_precombined(word) for word in anywhere_variants['Find']], [replace_with_precombined(word) for word in anywhere_variants['Replace']]))
+anywhere_variants = list(csv.reader(urlopen(hasidify_lexicon + 'anywhere_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
+anywhere_variants = dict(zip([replace_with_precombined(row[0]) for row in anywhere_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in anywhere_variants if row[1] != 'Replace']))
 
-lkizmen = pd.read_excel(hasidifier_lexicon, 'lkizmen')
-lkizmen = lkizmen['Words'].tolist()
-lkizmen = [replace_with_precombined(word) for word in lkizmen]
+lkizmen = list(csv.reader(urlopen(hasidify_lexicon + 'lkizmen.csv').read().decode('utf-8').replace('\r', '').splitlines()))
+lkizmen = [replace_with_precombined(row[0]) for row in lkizmen if row[0] != 'Words']
 
-word_group_variants = pd.read_excel(hasidifier_lexicon, 'word_group_variants')
-word_group_variants = dict(zip([replace_with_precombined(word) for word in word_group_variants['Find']], [replace_with_precombined(word) for word in word_group_variants['Replace']]))
+word_group_variants = list(csv.reader(urlopen(hasidify_lexicon + 'word_group_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
+word_group_variants = dict(zip([replace_with_precombined(row[0]) for row in word_group_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in word_group_variants if row[1] != 'Replace']))
 
-ik_exceptions = pd.read_excel(hasidifier_lexicon, 'ik_exceptions')
-ik_exceptions = ik_exceptions['Words'].tolist()
-ik_exceptions = [replace_with_precombined(word) for word in ik_exceptions]
+ik_exceptions = list(csv.reader(urlopen(hasidify_lexicon + 'ik_exceptions.csv').read().decode('utf-8').replace('\r', '').splitlines()))
+ik_exceptions = [replace_with_precombined(row[0]) for row in ik_exceptions if row[0] != 'Words']
 
-lekh_exceptions = pd.read_excel(hasidifier_lexicon, 'lekh_exceptions')
-lekh_exceptions = lekh_exceptions['Words'].tolist()
-lekh_exceptions = [replace_with_precombined(word) for word in lekh_exceptions]
+lekh_exceptions = list(csv.reader(urlopen(hasidify_lexicon + 'lekh_exceptions.csv').read().decode('utf-8').replace('\r', '').splitlines()))
+lekh_exceptions = [replace_with_precombined(row[0]) for row in lekh_exceptions if row[0] != 'Words']
 
-last_minute_fixes = pd.read_excel(hasidifier_lexicon, 'last_minute_fixes')
-last_minute_fixes = dict(zip(last_minute_fixes['Find'], last_minute_fixes['Replace']))
+last_minute_fixes = list(csv.reader(urlopen(hasidify_lexicon + 'last_minute_fixes.csv').read().decode('utf-8').replace('\r', '').splitlines()))
+last_minute_fixes = dict(zip([replace_with_precombined(row[0]) for row in last_minute_fixes if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in last_minute_fixes if row[1] != 'Replace']))
 
 reformatting = [
     ('וּװוּ', 'ואוואו'),

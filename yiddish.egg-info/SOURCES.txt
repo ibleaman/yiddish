@@ -1,0 +1,12 @@
+AUTHORS
+LICENSE
+README.md
+pyproject.toml
+setup.py
+yiddish/__init__.py
+yiddish/yiddish.py
+yiddish.egg-info/PKG-INFO
+yiddish.egg-info/SOURCES.txt
+yiddish.egg-info/dependency_links.txt
+yiddish.egg-info/requires.txt
+yiddish.egg-info/top_level.txt
