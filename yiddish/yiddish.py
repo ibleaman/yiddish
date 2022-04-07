@@ -360,7 +360,7 @@ def detransliterate(string, loshn_koydesh=False):
         new_tokens = []
         for token in tokens:
             if token.replace('-', '־') in reverse_lk:
-                new_tokens.append(reverse_lk[token].replace('־', '-'))
+                new_tokens.append(reverse_lk[token.replace('-', '־')].replace('־', '-'))
             else:
                 new_tokens.append(token)
             
