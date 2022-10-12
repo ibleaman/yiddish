@@ -228,6 +228,11 @@ reverse_translit_table = [ # to precombined
     (r'ן(\'|")', r'נ\1'),
     (r'ף(\'|")', r'פֿ\1'),
     (r'ץ(\'|")', r'צ\1'),
+    (r'\bך', 'כ'), # no word-initial final letters
+    (r'\bם', 'מ'),
+    (r'\bן', 'נ'),
+    (r'\bף', 'פֿ'),
+    (r'\bץ', 'צ'),
 ]
 
 reverse_translit_exceptions = [
@@ -250,6 +255,8 @@ reverse_translit_exceptions = [
     (r'geindlt', 'געאינדלט'), # surfing
     (r'\bumoys', 'אומאױס'), # אומאױסשעפּלעך
     (r'\bumayn', 'אומאײַנ'), # אומאײַנגענעם
+    (r'\bumeydl', 'אומאײדל'), # אומאײדל
+    (r'\bumeydel', 'אומאײדעל'), # אומאײדעלע
     (r'\bureynikl', 'אוראײניקל'),
     (r'\bbaayn', 'באַאײַנ'), # באַאײַנדרוקן, באַאײַנפֿלוסן
     (r'geayn', 'געאײַנ'), # געאײַנפֿלוסט
@@ -346,6 +353,8 @@ reverse_translit_exceptions = [
     (r'\baroysh', 'אַרױסה'),
 ]
 
+semitic_germanic_homophones = ['dan', 'eyn', 'iber', 'im', 'man', 'me', 'muter', 'nemen', 'oyfn', 'veys', 'zol']
+
 # note: output uses precombined Unicode characters
 # if loshn_koydesh, look up string in LK dictionary
 def detransliterate(string, loshn_koydesh=False):
@@ -354,12 +363,12 @@ def detransliterate(string, loshn_koydesh=False):
         string = re.sub(pair[0], pair[1], string)
     for pair in reverse_translit_table:
         string = re.sub(pair[0], pair[1], string)
-        
+                
     if loshn_koydesh:
         tokens = re.findall(r"[\w\-־]+|[^\w\-־]", string)
         new_tokens = []
         for token in tokens:
-            if token.replace('-', '־') in reverse_lk:
+            if token.replace('-', '־') in reverse_lk and token not in semitic_germanic_homophones:
                 new_tokens.append(reverse_lk[token.replace('-', '־')].replace('־', '-'))
             else:
                 new_tokens.append(token)
