@@ -353,7 +353,20 @@ reverse_translit_exceptions = [
     (r'\baroysh', 'אַרױסה'),
 ]
 
-semitic_germanic_homophones = ['dan', 'eyn', 'iber', 'im', 'man', 'me', 'muter', 'nemen', 'oyfn', 'veys', 'zol']
+semitic_germanic_homophones = [
+    'אױפֿן',
+    'איבער',
+    'אײן',
+    'אים',
+    'דאַן',
+    'װײס',
+    'זאָל',
+    'מאַן',
+    'מוטער',
+    'מע',
+    'נעמען',
+    'פּױלן',
+]
 
 # note: output uses precombined Unicode characters
 # if loshn_koydesh, look up string in LK dictionary
