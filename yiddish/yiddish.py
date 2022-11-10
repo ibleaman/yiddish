@@ -354,18 +354,28 @@ reverse_translit_exceptions = [
 ]
 
 semitic_germanic_homophones = [
+    'אָדער',
     'אױפֿן',
     'איבער',
     'אײן',
     'אים',
     'דאַן',
     'װײס',
+    'װעסט',
     'זאָל',
+    'טאָמער',
+    'טו',
     'מאַן',
     'מוטער',
+    'מײַנע',
     'מע',
     'נעמען',
+    'עמער',
     'פּױלן',
+    'קעץ',
+    'שװאַך',
+    'שיִער',
+    'שנײ',
 ]
 
 # note: output uses precombined Unicode characters
