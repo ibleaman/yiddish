@@ -125,6 +125,7 @@ translit_table = [ # all are precombined
     ('ע', 'e'),
     ('פּ', 'p'),
     ('פֿ', 'f'),
+    ('פ', 'f'),
     ('ף', 'f'),
     ('צ', 'ts'),
     ('ץ', 'ts'),
