@@ -334,7 +334,9 @@ reverse_translit_exceptions = [
     (r'\bgeburts', 'געבורטס'),
     (r'\barbets', 'אַרבעטס'),
     (r'\barbayts', 'אַרבײַטס'),
+    (r'\bdemolts', 'דעמאָלטס'),
     (r'\bgots', 'גאָטס'),
+    (r'\bguts', 'גוטס'),
     (r'\bgeshefts', 'געשעפֿטס'),
     (r'(\b|ba|far|der)haltst', r'\1האַלטסט'),
     (r'(\b|tse)shpaltst', r'\1שפּאַלטסט'),
@@ -342,6 +344,7 @@ reverse_translit_exceptions = [
     (r'shpetst', 'שפּעטסט'),
     (r'\brekhts\b', 'רעכטס'),
     (r'du shatst', 'דו שאַטסט'), # cf. ער שאַצט
+    (r'\bforverts\b', 'פֿאָרװערטס'),
     
     # kh != כ
     (r'\bpikhol', 'פּיקהאָל'), # פּיקהאָלץ, פּיקהאָלצן
@@ -360,12 +363,15 @@ semitic_germanic_homophones = [
     'איבער',
     'אײן',
     'אים',
+    'בױ',
     'דאַן',
     'װײס',
     'װעסט',
     'זאָל',
     'טאָמער',
     'טו',
+    'לײען',
+    'מאָגן',
     'מאַן',
     'מוטער',
     'מײַנע',
@@ -373,6 +379,7 @@ semitic_germanic_homophones = [
     'נעמען',
     'עמער',
     'פּױלן',
+    'קעלער',
     'קעץ',
     'שװאַך',
     'שיִער',
