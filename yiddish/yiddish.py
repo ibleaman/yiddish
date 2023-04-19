@@ -143,7 +143,7 @@ def transliterate(string, loshn_koydesh=False):
     romanized = replace_with_precombined(string)
     
     if loshn_koydesh:
-        tokens = re.findall(r"[אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־]+|[^אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־]", romanized)
+        tokens = re.findall(r"[אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־']+|[^אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־']", romanized)
         new_tokens = []
         for token in tokens:
             if token in lk and token not in germanic_semitic_homographs:
@@ -339,6 +339,7 @@ reverse_translit_exceptions = [
     (r'\bguts', 'גוטס'),
     (r'\bgeshefts', 'געשעפֿטס'),
     (r'(\b|ba|far|der)haltst', r'\1האַלטסט'),
+    (r'\bshlekhts\b', 'שלעכטס'),
     (r'(\b|tse)shpaltst', r'\1שפּאַלטסט'),
     (r'(\b|tse|far)shpreytst', r'\1שפּרײטסט'),
     (r'shpetst', 'שפּעטסט'),
