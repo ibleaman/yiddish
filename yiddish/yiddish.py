@@ -146,14 +146,16 @@ def transliterate(string, loshn_koydesh=False):
         tokens = re.findall(r"[אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־]+|[^אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־]", romanized)
         new_tokens = []
         for token in tokens:
-            if token in lk and token not in germanic_semitic_homographs:
+            #Exception for ס'
+            if token == "'" and new_tokens[-1] == "סאַמעך":
+                new_tokens[-1] = "ס'"
+            elif token in lk and token not in germanic_semitic_homographs:
                 if lk[token][0] in less_common_lk_pronunciations and len(lk[token]) > 1:
                     new_tokens.append(lk[token][1].replace('־', '-'))
                 else:
                     new_tokens.append(lk[token][0].replace('־', '-'))
             else:
                 new_tokens.append(token)
-            
         romanized = ''.join(new_tokens)
 
     for pair in translit_table:
