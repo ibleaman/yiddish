@@ -471,6 +471,7 @@ def respell_loshn_koydesh(text):
                 replacement = lk[key][1]
             else:
                 replacement = lk[key][0]
+            
                 
             # replace whole words (separated by spaces & punctuation, but not
             # followed by an apostrophe);
@@ -497,7 +498,28 @@ def respell_loshn_koydesh(text):
         text = re.sub(r'(?<![אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])' + key + r'(?![\'אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])', mistakes[key], text)
     
     return text
+
+##################################################
+# Convert phonetic spellings to loshn koydesh spellings
+##################################################
+
+# Note: input text WILL become precombined
+def spell_loshn_koydesh(text):
+    text = replace_with_precombined(text)
+    # loop over keys, in reverse order from longest keys to shortest
+    for key in sorted(list(reverse_lk.keys()), key=len, reverse=True):
+        # skip Germanic homophones
+        if key not in semitic_germanic_homophones:
+            replacement = reverse_lk[key]
+                
+            # replace whole words (separated by spaces & punctuation, but not
+            # followed by an apostrophe);
+            # also, append a Δ to the respelling so it's not accidentally overwritten
+            # (e.g., to avoid סעודה to סודע to סױדע)
+            text = re.sub(r'(?<![אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּתΔ])' + key + r'(?![\'אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])', 'Δ' + replacement, text)
     
+    return text
+
 #######################################
 # convert YIVO orthography into Hasidic
 
@@ -613,3 +635,32 @@ def hasidify(text):
     
     return text
     
+def desovietify(text):
+    text = replace_with_precombined(text)
+    text = re.split(r"([^אאַאָבבֿגדהווּװױזחטייִײײַכּכךלמםנןסעפפּפֿףצץקרששׂתּתA-Za-z'])", text)
+    
+    # add 'Γ' as a word/token boundary symbol
+    text = 'Γ'.join(text)
+    text = 'Γ' + text + 'Γ'
+
+    #replace unpointed alef with pasekh alef when not followed by vowels. 
+    #Unpointed aleph, if not followed by another vowel, is alway pasekh alef in Soviet orthography.
+    text = re.sub('א(?![י|ײ|ײַ|ױ|ו])', 'אַ', text)
+
+    #replace unpointed pey with fey
+    text = re.sub('פ', 'פֿ', text)
+
+    #replace final kaf, nun, mem, tsadi, fey with long forms
+    text = re.sub('כ(?=Γ)', 'ך', text)
+    text = re.sub('מ(?=Γ)', 'ם', text)
+    text = re.sub('נ(?=Γ)', 'ן', text)
+    text = re.sub('צ(?=Γ)', 'ץ', text)
+    text = re.sub('פֿ(?=Γ)', 'ף', text)
+
+    text = spell_loshn_koydesh(text)
+
+    # remove Greek letters
+    text = text.replace('Δ', '')
+    text = text.replace('Γ', '')
+
+    return text
