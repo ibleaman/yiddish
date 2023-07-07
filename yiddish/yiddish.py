@@ -499,9 +499,9 @@ def respell_loshn_koydesh(text):
     
     return text
 
-##################################################
-# Convert phonetic spellings to loshn koydesh spellings
-##################################################
+#######################################################
+# convert phonetic spellings to loshn-koydesh spellings
+#######################################################
 
 # Note: input text WILL become precombined
 def spell_loshn_koydesh(text):
@@ -518,6 +518,9 @@ def spell_loshn_koydesh(text):
             # (e.g., to avoid סעודה to סודע to סױדע)
             text = re.sub(r'(?<![אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּתΔ])' + key + r'(?![\'אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])', 'Δ' + replacement, text)
     
+    # remove the added Δ
+    text = re.sub('Δ', '', text)
+
     return text
 
 #######################################
@@ -643,14 +646,14 @@ def desovietify(text):
     text = 'Γ'.join(text)
     text = 'Γ' + text + 'Γ'
 
-    #replace unpointed alef with pasekh alef when not followed by vowels. 
-    #Unpointed aleph, if not followed by another vowel, is alway pasekh alef in Soviet orthography.
-    text = re.sub('א(?![י|ײ|ײַ|ױ|ו])', 'אַ', text)
+    # replace unpointed alef with pasekh alef when not followed by vowels. 
+    # (unpointed alef, if not followed by a vov/yud-based vowel, is alway pasekh alef in Soviet orthography)
+    text = re.sub('א(?![י|יִ|ײ|ײַ|וּ|ױ|ו])', 'אַ', text)
 
-    #replace unpointed pey with fey
-    text = re.sub('פ', 'פֿ', text)
+    # replace unpointed pey with fey
+    text = re.sub('פ', 'פֿ', text)
 
-    #replace final kaf, nun, mem, tsadi, fey with long forms
+    # replace final kof, mem, nun, tsadek, fey with long forms
     text = re.sub('כ(?=Γ)', 'ך', text)
     text = re.sub('מ(?=Γ)', 'ם', text)
     text = re.sub('נ(?=Γ)', 'ן', text)
