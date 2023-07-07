@@ -658,7 +658,15 @@ def desovietify(text):
     text = re.sub('מ(?=Γ)', 'ם', text)
     text = re.sub('נ(?=Γ)', 'ן', text)
     text = re.sub('צ(?=Γ)', 'ץ', text)
-    text = re.sub('פֿ(?=Γ)', 'ף', text)
+    text = re.sub('פֿ(?=Γ)', 'ף', text)
+
+    # replace oyf, bay
+    text = re.sub('(?<=Γ)אַף(?=Γ)', 'אױף', text)
+    text = re.sub('(?<=Γ)אַפֿן(?=Γ)', 'אױפֿן', text)
+    text = re.sub('(?<=Γ)אוף(?=Γ)', 'אױף', text)
+    text = re.sub('(?<=Γ)אופֿ', 'אױפֿ', text)
+    text = re.sub('(?<=Γ)באַ(?=Γ)', 'בײַ', text)
+    text = re.sub('(?<=Γ)באַם(?=Γ)', 'בײַם', text)
 
     text = spell_loshn_koydesh(text)
 
