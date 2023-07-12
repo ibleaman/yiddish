@@ -1,9 +1,8 @@
 # yiddish
 # A Python library for processing Yiddish text
-# Author: Isaac L. Bleaman (bleaman@berkeley.edu)
+# https://github.com/ibleaman/yiddish/
 
 import re
-from urllib.request import urlopen
 import csv
 
 ##########
@@ -66,10 +65,9 @@ def strip_diacritics(string): # and replace with decomposed
 # import loshn-koydesh pronunciation list
 #########################################
 
-respellings_url = 'https://raw.githubusercontent.com/ibleaman/loshn-koydesh-pronunciation/master/orthographic-to-phonetic.txt'
-respellings_list = urlopen(respellings_url).read().decode('utf-8')
-respellings_list = respellings_list.split('\n')
-respellings_list = [line for line in respellings_list if line]
+with open('submodules/loshn-koydesh-pronunciation/orthographic-to-phonetic.txt', 'r') as file:
+    respellings_list = file.read().split('\n')
+    respellings_list = [line for line in respellings_list if line]
 
 lk = {} # orthographic to phonetic
 reverse_lk = {} # phonetic to orthographic
@@ -533,34 +531,64 @@ def spell_loshn_koydesh(text):
 # note: all replacements are based on
 # looking for precombined characters
 #######################################
-hasidify_lexicon = 'https://raw.githubusercontent.com/ibleaman/hasidify_lexicon/master/'
+hasidify_lexicon_path = 'submodules/hasidify_lexicon'
 
-whole_word_variants = list(csv.reader(urlopen(hasidify_lexicon + 'whole_word_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
-whole_word_variants = dict(zip([replace_with_precombined(row[0]) for row in whole_word_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in whole_word_variants if row[1] != 'Replace']))
+whole_word_variants = dict()
+with open(f'{hasidify_lexicon_path}/whole_word_variants.csv', 'r') as file:
+    csv_reader = csv.DictReader(file)
+    for row in csv_reader:
+        whole_word_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
-prefix_variants = list(csv.reader(urlopen(hasidify_lexicon + 'prefix_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
-prefix_variants = dict(zip([replace_with_precombined(row[0]) for row in prefix_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in prefix_variants if row[1] != 'Replace']))
+prefix_variants = dict()
+with open(f'{hasidify_lexicon_path}/prefix_variants.csv', 'r') as file:
+    csv_reader = csv.DictReader(file)
+    for row in csv_reader:
+        prefix_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
-suffix_variants = list(csv.reader(urlopen(hasidify_lexicon + 'suffix_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
-suffix_variants = dict(zip([replace_with_precombined(row[0]) for row in suffix_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in suffix_variants if row[1] != 'Replace']))
+suffix_variants = dict()
+with open(f'{hasidify_lexicon_path}/suffix_variants.csv', 'r') as file:
+    csv_reader = csv.DictReader(file)
+    for row in csv_reader:
+        suffix_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
-anywhere_variants = list(csv.reader(urlopen(hasidify_lexicon + 'anywhere_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
-anywhere_variants = dict(zip([replace_with_precombined(row[0]) for row in anywhere_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in anywhere_variants if row[1] != 'Replace']))
+anywhere_variants = dict()
+with open(f'{hasidify_lexicon_path}/anywhere_variants.csv', 'r') as file:
+    csv_reader = csv.DictReader(file)
+    for row in csv_reader:
+        anywhere_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
-lkizmen = list(csv.reader(urlopen(hasidify_lexicon + 'lkizmen.csv').read().decode('utf-8').replace('\r', '').splitlines()))
-lkizmen = [replace_with_precombined(row[0]) for row in lkizmen if row[0] != 'Words']
+lkizmen = []
+with open(f'{hasidify_lexicon_path}/lkizmen.csv', 'r') as file:
+    csv_reader = csv.reader(file)
+    header = next(csv_reader)  # Skip the header row
+    for row in csv_reader:
+        lkizmen.append(replace_with_precombined(row[0]))
 
-word_group_variants = list(csv.reader(urlopen(hasidify_lexicon + 'word_group_variants.csv').read().decode('utf-8').replace('\r', '').splitlines()))
-word_group_variants = dict(zip([replace_with_precombined(row[0]) for row in word_group_variants if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in word_group_variants if row[1] != 'Replace']))
+word_group_variants = dict()
+with open(f'{hasidify_lexicon_path}/word_group_variants.csv', 'r') as file:
+    csv_reader = csv.DictReader(file)
+    for row in csv_reader:
+        word_group_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
-ik_exceptions = list(csv.reader(urlopen(hasidify_lexicon + 'ik_exceptions.csv').read().decode('utf-8').replace('\r', '').splitlines()))
-ik_exceptions = [replace_with_precombined(row[0]) for row in ik_exceptions if row[0] != 'Words']
+ik_exceptions = []
+with open(f'{hasidify_lexicon_path}/ik_exceptions.csv', 'r') as file:
+    csv_reader = csv.reader(file)
+    header = next(csv_reader)  # Skip the header row
+    for row in csv_reader:
+        ik_exceptions.append(replace_with_precombined(row[0]))
 
-lekh_exceptions = list(csv.reader(urlopen(hasidify_lexicon + 'lekh_exceptions.csv').read().decode('utf-8').replace('\r', '').splitlines()))
-lekh_exceptions = [replace_with_precombined(row[0]) for row in lekh_exceptions if row[0] != 'Words']
+lekh_exceptions = []
+with open(f'{hasidify_lexicon_path}/lekh_exceptions.csv', 'r') as file:
+    csv_reader = csv.reader(file)
+    header = next(csv_reader)  # Skip the header row
+    for row in csv_reader:
+        lekh_exceptions.append(replace_with_precombined(row[0]))
 
-last_minute_fixes = list(csv.reader(urlopen(hasidify_lexicon + 'last_minute_fixes.csv').read().decode('utf-8').replace('\r', '').splitlines()))
-last_minute_fixes = dict(zip([replace_with_precombined(row[0]) for row in last_minute_fixes if row[0] != 'Find'], [replace_with_precombined(row[1]) for row in last_minute_fixes if row[1] != 'Replace']))
+last_minute_fixes = dict()
+with open(f'{hasidify_lexicon_path}/last_minute_fixes.csv', 'r') as file:
+    csv_reader = csv.DictReader(file)
+    for row in csv_reader:
+        last_minute_fixes[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
 reformatting = [
     ('וּװוּ', 'ואוואו'),
