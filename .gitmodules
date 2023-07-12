@@ -1,0 +1,3 @@
+[submodule "yiddish/submodules/loshn-koydesh-pronunciation"]
+	path = yiddish/submodules/loshn-koydesh-pronunciation
+	url = https://github.com/ibleaman/loshn-koydesh-pronunciation.git
