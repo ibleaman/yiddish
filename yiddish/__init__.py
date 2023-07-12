@@ -7,5 +7,7 @@ from .yiddish import (
   detransliterate,
   romanise_german,
   respell_loshn_koydesh,
+  spell_loshn_koydesh,
   hasidify,
+  desovietify
 )
