@@ -1,0 +1,2 @@
+include submodules/loshn-koydesh-pronunciation/orthographic-to-phonetic.txt
+include submodules/hasidify_lexicon/*.csv
