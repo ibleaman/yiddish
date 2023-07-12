@@ -1,6 +1,0 @@
-Isaac L. Bleaman | https://github.com/ibleaman
-Samuel Lo | https://github.com/vatnid
-
-ILB wrote many of these functions for personal use, in a few different programming languages, over the years. They were put together in a single .py file in 2021 for REYD, a Yiddish text-to-speech project, and then packaged as a standalone Python library in 2022. SL contributed the German romanization function designed for use with aeneas, an audio-text synchronizer.
-
-Eliezer Niborski provided the original list of Loshn-koydesh (Hebrew- and Aramaic-origin) words in Yiddish, subsequently expanded and imported into the current library. See: https://github.com/ibleaman/loshn-koydesh-pronunciation
