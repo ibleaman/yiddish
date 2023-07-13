@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='yiddish',
-    version='0.0.13',
+    version='0.0.14',
     author='Isaac L. Bleaman',
     author_email='bleaman@berkeley.edu',
     description='A Python library for processing Yiddish text',
@@ -14,8 +14,6 @@ setup(
     url='https://github.com/ibleaman/yiddish',
     license='MIT',
     packages=['yiddish'],
-    package_dir={'yiddish': 'yiddish'},
-    package_data={'yiddish': ['submodules/loshn-koydesh-pronunciation/orthographic-to-phonetic.txt',
-                              'submodules/hasidify_lexicon/*.csv']},
+    include_package_data=True,
     test_suite='tests',
 )

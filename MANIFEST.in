@@ -1,0 +1,2 @@
+recursive-include yiddish/submodules *.txt
+recursive-include yiddish/submodules *.csv
