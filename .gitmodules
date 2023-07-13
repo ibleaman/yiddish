@@ -1,6 +1,6 @@
 [submodule "yiddish/submodules/loshn-koydesh-pronunciation"]
-	path = yiddish/submodules/loshn-koydesh-pronunciation
+	path = submodules/loshn-koydesh-pronunciation
 	url = https://github.com/ibleaman/loshn-koydesh-pronunciation.git
 [submodule "yiddish/submodules/hasidify_lexicon"]
-	path = yiddish/submodules/hasidify_lexicon
+	path = submodules/hasidify_lexicon
 	url = https://github.com/ibleaman/hasidify_lexicon.git
