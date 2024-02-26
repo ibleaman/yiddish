@@ -138,8 +138,19 @@ translit_table = [ # all are precombined
     ('־', '-'),
 ]
 
+loc_translit_table = [ # all are precombined
+    ('זש', 'zsh'),
+    ('בּ', 'b'),
+    ('װ', 'ṿ'),
+    ('ח', 'ḥ'),
+    ('ט', 'ṭ'),
+    ('ק', 'ḳ'),
+    ('שׂ', 'ś'),
+    ('ת', 's̀'),
+]
+
 # if loshn_koydesh, look up string in LK dictionary
-def transliterate(string, loshn_koydesh=False):
+def transliterate(string, loshn_koydesh=False, loc=False):
     romanized = replace_with_precombined(string)
     
     if loshn_koydesh:
@@ -155,6 +166,10 @@ def transliterate(string, loshn_koydesh=False):
                 new_tokens.append(token)
             
         romanized = ''.join(new_tokens)
+
+    if loc:
+        for pair in loc_translit_table:
+            romanized = re.sub(pair[0], pair[1], romanized)
 
     for pair in translit_table:
         romanized = re.sub(pair[0], pair[1], romanized)
