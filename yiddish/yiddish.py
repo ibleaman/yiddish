@@ -229,11 +229,11 @@ reverse_translit_table = [ # to precombined
     (r'ן(\'|")', r'נ\1'),
     (r'ף(\'|")', r'פֿ\1'),
     (r'ץ(\'|")', r'צ\1'),
-    (r'\bך', 'כ'), # no word-initial final letters
-    (r'\bם', 'מ'),
-    (r'\bן', 'נ'),
-    (r'\bף', 'פֿ'),
-    (r'\bץ', 'צ'),
+    (r'(?<!\')\bך', 'כ'), # no word-initial final letters (but skip forms like מיר'ן)
+    (r'(?<!\')\bם', 'מ'),
+    (r'(?<!\')\bן', 'נ'),
+    (r'(?<!\')\bף', 'פֿ'),
+    (r'(?<!\')\bץ', 'צ'),
 ]
 
 reverse_translit_exceptions = [
@@ -298,6 +298,7 @@ reverse_translit_exceptions = [
     (r'\bkayor', 'קאַיאָר'),
     (r'\bayed', 'אַיעד'), # אַיעדער
     (r'\bayo\b', 'אַיאָ'),
+    (r'\bhayom\b', 'האַיאָם'), # needed for אַד־האַיאָם־האַזע -> עד־היום־הזה
     
     # ey != ײ
     (r'geyogt', 'געיאָגט'),
@@ -353,11 +354,16 @@ reverse_translit_exceptions = [
     (r'du shatst', 'דו שאַטסט'), # cf. ער שאַצט
     (r'\bforverts\b', 'פֿאָרװערטס'),
     (r'\bayngemakhts', 'אײַנגעמאַכטס'),
+    (r'\bmasatshusets', 'מאַסאַטשוסעטס'),
+    (r'\bhundertst', 'הונדערטסט'),
     
     # kh != כ
     (r'\bpikhol', 'פּיקהאָל'), # פּיקהאָלץ, פּיקהאָלצן
     (r'\btsurikhalt', 'צוריקהאַלט'), # צוריקהאַלטן etc.
     (r'\bkrikhalt', 'קריקהאַלט'),
+    (r'\bshtokhol', 'שטאָקהאָל'), # שטאָקהאָלם/מער
+    (r'\bstokhol', 'סטאָקהאָל'),
+    (r'\bavekharg', 'אַװעקהאַרג'), # needed for אַװעקהרגע(נע)ן
     
     # sh != ש
     (r'\boysh(?!ers?\b|vits(er)?\b)', 'אױסה'), # the only exceptions to oysh = אױסה
@@ -392,6 +398,7 @@ semitic_germanic_homophones = [
     'עלעף',
     'עמער',
     'פּױלן',
+    'קאַשע',
     'קעלער',
     'קעץ',
     'קערן',
