@@ -138,8 +138,20 @@ translit_table = [ # all are precombined
     ('־', '-'),
 ]
 
+loc_translit_table = [ # all are precombined
+    ('זש', 'zsh'),
+    ('בּ', 'b'),
+    ('װ', 'ṿ'),
+    ('ח', 'ḥ'),
+    ('ט', 'ṭ'),
+    ('ק', 'ḳ'),
+    ('שׂ', 'ś'),
+    ('ת', 's̀'),
+]
+
 # if loshn_koydesh, look up string in LK dictionary
-def transliterate(string, loshn_koydesh=False):
+# if loc, use Library of Congress diacritics
+def transliterate(string, loshn_koydesh=False, loc=False):
     romanized = replace_with_precombined(string)
     
     if loshn_koydesh:
@@ -155,6 +167,11 @@ def transliterate(string, loshn_koydesh=False):
                 new_tokens.append(token)
             
         romanized = ''.join(new_tokens)
+
+    if loc:
+        for pair in loc_translit_table:
+            romanized = re.sub(pair[0], pair[1], romanized)
+        romanized = re.sub(r'סה', 'סʹה', romanized)
 
     for pair in translit_table:
         romanized = re.sub(pair[0], pair[1], romanized)
@@ -343,6 +360,7 @@ reverse_translit_exceptions = [
     (r'\bguts', 'גוטס'),
     (r'\bgeshefts', 'געשעפֿטס'),
     (r'(\b|ba|far|der)haltst', r'\1האַלטסט'),
+    (r'\bfets\b', 'פֿעטס'), # not always, but most frequently
     (r'\bnentst', 'נענטסט'),
     (r'\bneentst', 'נעענטסט'),
     (r'\bnoentst', 'נאָענטסט'),
@@ -382,7 +400,7 @@ semitic_germanic_homophones = [
     'דינע',
     'װײס',
     'װעסט',
-    'זאַל',
+    'זאַל',
     'זאָל',
     'טאָמער',
     'טו',
@@ -399,6 +417,7 @@ semitic_germanic_homophones = [
     'עמער',
     'פּױלן',
     'קאַשע',
+    'קוש',
     'קעלער',
     'קעץ',
     'קערן',
