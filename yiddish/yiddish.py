@@ -297,7 +297,6 @@ reverse_translit_exceptions = [
     (r'\bforur', 'פֿאָראור'), # פֿאָראורטל
     (r'\bfaribl', 'פֿאַראיבל'),
     (r'\bfarinteres', 'פֿאַראינטערעס'), # פֿאַראינטערעסירן
-    (r'\bvoltst', 'װאָלטסט'),
     
     # ay != ײַ
     (r'\brayon\b', 'ראַיאָן'),
@@ -311,6 +310,7 @@ reverse_translit_exceptions = [
     (r'payats\b', 'פּאַיאַץ'),
     (r'payatsn\b', 'פּאַיאַצן'),
     (r'payatseve', 'פּאַיאַצעװע'),
+    (r'\bfayants\b', 'פֿאַיאַנץ'),
     (r'farayorik', 'פֿאַראַיאָריק'),
     (r'\bkayor', 'קאַיאָר'),
     (r'\bayed', 'אַיעד'), # אַיעדער
@@ -351,6 +351,7 @@ reverse_translit_exceptions = [
     (r'tstu\b', 'טסטו'),
     (r'\beltst', 'עלטסט'),
     (r'\bkeltst', 'קעלטסט'),
+    (r'\bkalts\b', 'קאַלטס'),
     (r'\bbalibtst', 'באַליבטסט'),
     (r'\bgeburts', 'געבורטס'),
     (r'\barbets', 'אַרבעטס'),
@@ -374,6 +375,9 @@ reverse_translit_exceptions = [
     (r'\bayngemakhts', 'אײַנגעמאַכטס'),
     (r'\bmasatshusets', 'מאַסאַטשוסעטס'),
     (r'\bhundertst', 'הונדערטסט'),
+    (r'\bvoltst', 'װאָלטסט'),
+    (r'\btrakhtst\b', 'טראַכטסט'),
+    (r'\bsoldats', 'סאָלדאַטס'), # dem soldats; soldatske
     
     # kh != כ
     (r'\bpikhol', 'פּיקהאָל'), # פּיקהאָלץ, פּיקהאָלצן
@@ -402,6 +406,7 @@ semitic_germanic_homophones = [
     'װעסט',
     'זאַל',
     'זאָל',
+    'זאָקן',
     'טאָמער',
     'טו',
     'לױט',
