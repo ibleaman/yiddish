@@ -2,9 +2,13 @@
 # A Python library for processing Yiddish text
 # https://github.com/ibleaman/yiddish/
 
-import pkg_resources
 import re
 import csv
+from importlib.resources import files
+
+def _open_resource(relative_path):
+    """Open a data file bundled inside the yiddish package as UTF-8 text."""
+    return files(__package__ or 'yiddish').joinpath(relative_path).open('r', encoding='utf-8')
 
 ##########
 # encoding
@@ -66,8 +70,7 @@ def strip_diacritics(string): # and replace with decomposed
 # import loshn-koydesh pronunciation list
 #########################################
 
-respellings_path = pkg_resources.resource_filename('yiddish', 'submodules/loshn-koydesh-pronunciation/orthographic-to-phonetic.txt')
-with open(respellings_path, 'r') as file:
+with _open_resource('submodules/loshn-koydesh-pronunciation/orthographic-to-phonetic.txt') as file:
     respellings_list = file.read().split('\n')
     respellings_list = [line for line in respellings_list if line]
 
@@ -361,8 +364,12 @@ reverse_translit_exceptions = [
     (r'\bguts', 'גוטס'),
     (r'\bgeshefts', 'געשעפֿטס'),
     (r'(\b|ba|far|der)haltst', r'\1האַלטסט'),
+    (r'(\b|ba|far|der)halts\b', r'\1האַלטס'), # 2PL verb
+    (r'\bhots\b', 'האָטס'), # 2PL verb
+    (r'\bvarts\b', 'װאַרטס'), # 2PL verb
     (r'\bfets\b', 'פֿעטס'), # not always, but most frequently
     (r'\bnentst', 'נענטסט'),
+    (r'\bnakhts\b', 'נאַכטס'),
     (r'\bneentst', 'נעענטסט'),
     (r'\bnoentst', 'נאָענטסט'),
     (r'\bshlekhts\b', 'שלעכטס'),
@@ -404,6 +411,7 @@ semitic_germanic_homophones = [
     'דינע',
     'װײס',
     'װעסט',
+    'װעסטן',
     'זאַל',
     'זאָל',
     'זאָקן',
@@ -577,58 +585,58 @@ def spell_loshn_koydesh(text):
 hasidify_lexicon_path = 'submodules/hasidify_lexicon'
 
 whole_word_variants = dict()
-with open(pkg_resources.resource_filename('yiddish', hasidify_lexicon_path + '/whole_word_variants.csv'), 'r') as file:
+with _open_resource(hasidify_lexicon_path + '/whole_word_variants.csv') as file:
     csv_reader = csv.DictReader(file)
     for row in csv_reader:
         whole_word_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
 prefix_variants = dict()
-with open(pkg_resources.resource_filename('yiddish', hasidify_lexicon_path + '/prefix_variants.csv'), 'r') as file:
+with _open_resource(hasidify_lexicon_path + '/prefix_variants.csv') as file:
     csv_reader = csv.DictReader(file)
     for row in csv_reader:
         prefix_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
 suffix_variants = dict()
-with open(pkg_resources.resource_filename('yiddish', hasidify_lexicon_path + '/suffix_variants.csv'), 'r') as file:
+with _open_resource(hasidify_lexicon_path + '/suffix_variants.csv') as file:
     csv_reader = csv.DictReader(file)
     for row in csv_reader:
         suffix_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
 anywhere_variants = dict()
-with open(pkg_resources.resource_filename('yiddish', hasidify_lexicon_path + '/anywhere_variants.csv'), 'r') as file:
+with _open_resource(hasidify_lexicon_path + '/anywhere_variants.csv') as file:
     csv_reader = csv.DictReader(file)
     for row in csv_reader:
         anywhere_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
 lkizmen = []
-with open(pkg_resources.resource_filename('yiddish', hasidify_lexicon_path + '/lkizmen.csv'), 'r') as file:
+with _open_resource(hasidify_lexicon_path + '/lkizmen.csv') as file:
     csv_reader = csv.reader(file)
     header = next(csv_reader)  # Skip the header row
     for row in csv_reader:
         lkizmen.append(replace_with_precombined(row[0]))
 
 word_group_variants = dict()
-with open(pkg_resources.resource_filename('yiddish', hasidify_lexicon_path + '/word_group_variants.csv'), 'r') as file:
+with _open_resource(hasidify_lexicon_path + '/word_group_variants.csv') as file:
     csv_reader = csv.DictReader(file)
     for row in csv_reader:
         word_group_variants[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
 
 ik_exceptions = []
-with open(pkg_resources.resource_filename('yiddish', hasidify_lexicon_path + '/ik_exceptions.csv'), 'r') as file:
+with _open_resource(hasidify_lexicon_path + '/ik_exceptions.csv') as file:
     csv_reader = csv.reader(file)
     header = next(csv_reader)  # Skip the header row
     for row in csv_reader:
         ik_exceptions.append(replace_with_precombined(row[0]))
 
 lekh_exceptions = []
-with open(pkg_resources.resource_filename('yiddish', hasidify_lexicon_path + '/lekh_exceptions.csv'), 'r') as file:
+with _open_resource(hasidify_lexicon_path + '/lekh_exceptions.csv') as file:
     csv_reader = csv.reader(file)
     header = next(csv_reader)  # Skip the header row
     for row in csv_reader:
         lekh_exceptions.append(replace_with_precombined(row[0]))
 
 last_minute_fixes = dict()
-with open(pkg_resources.resource_filename('yiddish', hasidify_lexicon_path + '/last_minute_fixes.csv'), 'r') as file:
+with _open_resource(hasidify_lexicon_path + '/last_minute_fixes.csv') as file:
     csv_reader = csv.DictReader(file)
     for row in csv_reader:
         last_minute_fixes[replace_with_precombined(row['Find'])] = replace_with_precombined(row['Replace'])
