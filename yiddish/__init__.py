@@ -1,11 +1,13 @@
 from .yiddish import (
   replace_with_precombined,
+  replace_with_precomposed,
   replace_with_decomposed,
   replace_punctuation,
   strip_diacritics,
   transliterate,
   detransliterate,
   romanise_german,
+  romanize_german,
   respell_loshn_koydesh,
   spell_loshn_koydesh,
   hasidify,

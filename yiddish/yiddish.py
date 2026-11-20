@@ -38,6 +38,9 @@ def replace_with_precombined(string):
     string = re.sub('בּ', 'ב', string)
     return string
 
+# "precomposed" is the standard Unicode term; this is an alias
+replace_with_precomposed = replace_with_precombined
+
 # When vov_yud==True, these will be preserved as precombined chars:
 #      װ, ײ, ױ
 def replace_with_decomposed(string, vov_yud=False):
@@ -507,6 +510,9 @@ def romanise_german(text):
     output = re.sub(r"([^aeiou])([nl])\b", r"\1e\2", output) # Isaac's addition
 
     return output
+
+# alternate spelling
+romanize_german = romanise_german
 
 ##################################################
 # whole-word lookup-table replacement (used below)
