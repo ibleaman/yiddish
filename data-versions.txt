@@ -1,0 +1,5 @@
+# Versions of the data repos that get bundled into each release of this package
+# Format: <github owner>/<repo>  <tag or full commit hash>
+# To update the data in a release: change the line, commit, then tag the release
+ibleaman/loshn-koydesh-pronunciation 4d98c6bbc68c5a72c1da0a347e5e7c14203430e6
+ibleaman/hasidify_lexicon c6e2572c162533a37ae27d278ca7511d90a73a2d
