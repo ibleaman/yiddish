@@ -60,7 +60,7 @@ def replace_punctuation(string):
 def strip_diacritics(string): # and replace with decomposed
     string = replace_with_decomposed(string)
     return re.sub(r'[ִַַָּּּּֿֿׂ]', '', string)
-    
+
 ##########################################
 # transliteration/romanization and reverse
 ##########################################
@@ -91,7 +91,7 @@ for line in respellings_list:
 germanic_semitic_homographs = ["אין", "צום", "בין", "ברי", "מיד", "קין", "שער", "מעגן", "צו", "מאַנס", "טוען", "מערער"]
 
 less_common_lk_pronunciations = ["אַדױשעם", "כאַנוקע", "גדױלע", "כאַװײרע", "מיכיע", "כאָװער", "אָרעװ", "מאָסער", "כיִעס", "זקאָנים", "נעװאָלע", "מאַשלעם", "כפֿאָצים", "כאַכאָמע", "טאַנאָיִם", "יאָסעף", "יאָסעפֿס", "יאָסעפֿן"]
-            
+
 translit_table = [ # all are precombined
     ('א', ''),
     ('אַ', 'a'),
@@ -156,7 +156,7 @@ loc_translit_table = [ # all are precombined
 # if loc, use Library of Congress diacritics
 def transliterate(string, loshn_koydesh=False, loc=False):
     romanized = replace_with_precombined(string)
-    
+
     if loshn_koydesh:
         tokens = re.findall(r"[אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־']+|[^אאַאָבבֿגדהוװוּױזחטייִײײַככּךלמםנןסעפּפֿףצץקרששׂתּת\-־']", romanized)
         new_tokens = []
@@ -168,7 +168,7 @@ def transliterate(string, loshn_koydesh=False, loc=False):
                     new_tokens.append(lk[token][0].replace('־', '-'))
             else:
                 new_tokens.append(token)
-            
+
         romanized = ''.join(new_tokens)
 
     if loc:
@@ -182,7 +182,7 @@ def transliterate(string, loshn_koydesh=False, loc=False):
     romanized = re.sub(r'j$', 'i', romanized)
     romanized = re.sub(r'j(?![aeiou])', 'i', romanized)
     romanized = re.sub('j', 'y', romanized)
-        
+
     return romanized
 
 reverse_translit_table = [ # to precombined
@@ -300,7 +300,7 @@ reverse_translit_exceptions = [
     (r'\bforur', 'פֿאָראור'), # פֿאָראורטל
     (r'\bfaribl', 'פֿאַראיבל'),
     (r'\bfarinteres', 'פֿאַראינטערעס'), # פֿאַראינטערעסירן
-    
+
     # ay != ײַ
     (r'\brayon\b', 'ראַיאָן'),
     (r'\brayonen\b', 'ראַיאָנען'),
@@ -319,7 +319,7 @@ reverse_translit_exceptions = [
     (r'\bayed', 'אַיעד'), # אַיעדער
     (r'\bayo\b', 'אַיאָ'),
     (r'\bhayom\b', 'האַיאָם'), # needed for אַד־האַיאָם־האַזע -> עד־היום־הזה
-    
+
     # ey != ײ
     (r'geyogt', 'געיאָגט'),
     (r'geyeg', 'געיעג'),
@@ -328,9 +328,9 @@ reverse_translit_exceptions = [
     (r'geyadet', 'געיאַדעט'),
     (r'geyopet', 'געיאָפּעט'),
     (r'geyabede', 'געיאַבעדע'), # געיאַבעדע(װע)ט
-    (r'geyakhmert', 'געיאַכמערט'),    
-    (r'tseyakhmert', 'צעיאַכמערט'),    
-    (r'tseyakhmet', 'צעיאַכמעט'),    
+    (r'geyakhmert', 'געיאַכמערט'),
+    (r'tseyakhmert', 'צעיאַכמערט'),
+    (r'tseyakhmet', 'צעיאַכמעט'),
     (r'geyodlt', 'געיאָדלט'),
     (r'geyomer', 'געיאָמער'),
     (r'tseyomer', 'צעיאָמער'),
@@ -342,14 +342,14 @@ reverse_translit_exceptions = [
     (r'geyekt', 'געיעקט'),
     (r'\bgeyert\b', 'געיערט'),
     (r'pleyade', 'פּלעיאַדע'),
-    
+
     # oy != ױ
     (r'proyekt', 'פּראָיעקט'), # פּראָיעקטאָר
     (r'umloyal', 'אומלאָיאַל'),
     (r'loyal', 'לאָיאַל'),
     (r'paranoye', 'פּאַראַנאָיע'),
     (r'poyezd', 'פּאָיעזד'),
-    
+
     # ts != צ
     (r'tstu\b', 'טסטו'),
     (r'\beltst', 'עלטסט'),
@@ -385,7 +385,7 @@ reverse_translit_exceptions = [
     (r'\bvoltst', 'װאָלטסט'),
     (r'\btrakhtst\b', 'טראַכטסט'),
     (r'\bsoldats', 'סאָלדאַטס'), # dem soldats; soldatske
-    
+
     # kh != כ
     (r'\bpikhol', 'פּיקהאָל'), # פּיקהאָלץ, פּיקהאָלצן
     (r'\btsurikhalt', 'צוריקהאַלט'), # צוריקהאַלטן etc.
@@ -393,7 +393,7 @@ reverse_translit_exceptions = [
     (r'\bshtokhol', 'שטאָקהאָל'), # שטאָקהאָלם/מער
     (r'\bstokhol', 'סטאָקהאָל'),
     (r'\bavekharg', 'אַװעקהאַרג'), # needed for אַװעקהרגע(נע)ן
-    
+
     # sh != ש
     (r'\boysh(?!ers?\b|vits(er)?\b)', 'אױסה'), # the only exceptions to oysh = אױסה
                                                # עושר, עושרס, אױשװיץ, אױשװיצער
@@ -448,7 +448,7 @@ def detransliterate(string, loshn_koydesh=False):
         string = re.sub(pair[0], pair[1], string)
     for pair in reverse_translit_table:
         string = re.sub(pair[0], pair[1], string)
-                
+
     if loshn_koydesh:
         tokens = re.findall(r"[\w\-־]+|[^\w\-־]", string)
         new_tokens = []
@@ -457,9 +457,9 @@ def detransliterate(string, loshn_koydesh=False):
                 new_tokens.append(reverse_lk[token.replace('-', '־')].replace('־', '-'))
             else:
                 new_tokens.append(token)
-            
+
         string = ''.join(new_tokens)
-            
+
     return string
 
 # for automatic segmentation using German; code by Samuel Lo
@@ -509,72 +509,111 @@ def romanise_german(text):
     return output
 
 ##################################################
+# whole-word lookup-table replacement (used below)
+##################################################
+
+# characters that count as part of a word when matching whole words:
+# Hebrew-script letters, Yiddish digraphs, all nekudes, and the
+# precombined presentation forms (e.g., אַ, פֿ, יִ); the makef (־) is
+# deliberately NOT included since it separates the parts of hyphenated words
+_WORD_CHARS = '\u05b0-\u05bd\u05bf\u05c1\u05c2\u05c4\u05c5\u05c7\u05d0-\u05ea\u05f0-\u05f2\ufb1d-\ufb28\ufb2a-\ufb4f'
+
+# in user input text, the apostrophe and double quote may also be written as geresh/gershayim
+# (or prime/double prime). keys are stored with ' and ", so treat these as equivalent
+_APOSTROPHES = "'\u05f3\u2032"
+_QUOTES = '"\u05f4\u2033'
+_NORMALIZE_QUOTES = str.maketrans({**{c: "'" for c in _APOSTROPHES}, **{c: '"' for c in _QUOTES}})
+
+def _char_pattern(char):
+    if char == "'":
+        return '[' + _APOSTROPHES + ']'
+    if char == '"':
+        return '[' + _QUOTES + ']'
+    return re.escape(char)
+
+def _trie_pattern(words):
+    """Regex source matching any of `words`, built from a prefix tree (trie)
+    so that words sharing a beginning share that part of the pattern. Longer
+    matches are preferred; if one fails the whole-word check, shorter ones are
+    tried."""
+    trie = {}
+    for word in words:
+        node = trie
+        for char in word:
+            node = node.setdefault(char, {})
+        node[''] = True  # marks the end of a word
+
+    def build(node):
+        ends_here = '' in node
+        branches = [_char_pattern(char) + build(node[char]) for char in sorted(node) if char]
+        if not branches:
+            return ''
+        body = branches[0] if len(branches) == 1 else '(?:' + '|'.join(branches) + ')'
+        if ends_here:
+            body = '(?:' + body + ')?' if len(branches) == 1 else body + '?'
+        return body
+
+    return build(trie)
+
+def _whole_word_replacer(mapping):
+    """Return a function that replaces every whole-word occurrence of any key
+    in `mapping` with its value. Whole words are separated by spaces and
+    punctuation, and a match may not be followed by an apostrophe (like samekh
+    in ס'איז). Keys can be multi-word phrases; the longest match wins.
+    The text is scanned just once and so replacements are never re-processed."""
+    pattern = re.compile(
+        '(?<![' + _WORD_CHARS + '])(?:' + _trie_pattern(mapping) + ")(?![" + _WORD_CHARS + _APOSTROPHES + "])"
+    )
+    return lambda text: pattern.sub(
+        lambda match: mapping[match.group(0).translate(_NORMALIZE_QUOTES)], text)
+
+# the replacers are built on first use, so importing the package stays fast
+_replacers = {}
+def _get_replacer(name, make_mapping):
+    if name not in _replacers:
+        _replacers[name] = _whole_word_replacer(make_mapping())
+    return _replacers[name]
+
+##################################################
 # for TTS: respell orthographic words phonetically
 ##################################################
+
+def _respelling_mapping():
+    mapping = {}
+    for key, entries in lk.items():
+        # skip Germanic homographs, which are usually phonetic
+        if key in germanic_semitic_homographs:
+            continue
+        # skip less common LK pronunciations, in favor of more common ones
+        if entries[0] in less_common_lk_pronunciations and len(entries) > 1:
+            mapping[key] = entries[1]
+        else:
+            mapping[key] = entries[0]
+    # missed items
+    mapping["ר'"] = "רעב"
+    return mapping
 
 # Note: input text WILL become precombined
 def respell_loshn_koydesh(text):
     text = replace_with_precombined(text)
-    # loop over keys, in reverse order from longest keys to shortest
-    for key in sorted(list(lk.keys()), key=len, reverse=True):
-        # skip Germanic homographs, which are usually phonetic
-        if key not in germanic_semitic_homographs:
-            # skip less common LK pronunciations, in favor of more common ones
-            if lk[key][0] in less_common_lk_pronunciations and len(lk[key]) > 1:
-                replacement = lk[key][1]
-            else:
-                replacement = lk[key][0]
-            
-                
-            # replace whole words (separated by spaces & punctuation, but not
-            # followed by an apostrophe);
-            # also, append a Δ to the respelling so it's not accidentally overwritten
-            # (e.g., to avoid סעודה to סודע to סױדע)
-            text = re.sub(r'(?<![אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּתΔ])' + key + r'(?![\'אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])', 'Δ' + replacement, text)
-    
-    # missed items
-    fixes = {
-        "ר'": "רעב",
-    }
-    for key in fixes:
-        text = re.sub(r'(?<![אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּתΔ])' + key + r'(?![\'אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])', fixes[key], text)
-        
-    # remove the added Δ
-    text = re.sub('Δ', '', text)
-    
-    # undo whole-word mistakes
-    mistakes = {
-        'יוד"שין': "יאַש",
-        "יוד״שין": "יאַש",
-    }
-    for key in mistakes:
-        text = re.sub(r'(?<![אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])' + key + r'(?![\'אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])', mistakes[key], text)
-    
+    text = _get_replacer('respell', _respelling_mapping)(text)
+
     return text
 
 #######################################################
 # convert phonetic spellings to loshn-koydesh spellings
 #######################################################
 
+def _spelling_mapping():
+    # skip Germanic homophones
+    return {key: value for key, value in reverse_lk.items()
+            if key not in semitic_germanic_homophones}
+
 # Note: input text WILL become precombined
 def spell_loshn_koydesh(text):
     text = replace_with_precombined(text)
-    # loop over keys, in reverse order from longest keys to shortest
-    for key in sorted(list(reverse_lk.keys()), key=len, reverse=True):
-        # skip Germanic homophones
-        if key not in semitic_germanic_homophones:
-            replacement = reverse_lk[key]
-                
-            # replace whole words (separated by spaces & punctuation, but not
-            # followed by an apostrophe);
-            # also, append a Δ to the respelling so it's not accidentally overwritten
-            # (e.g., to avoid סעודה to סודע to סױדע)
-            text = re.sub(r'(?<![אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּתΔ])' + key + r'(?![\'אאַאָבבֿגדהװווּזחטייִײײַױכּכךלמםנןסעפּפפֿףצץקרששׂתּת])', 'Δ' + replacement, text)
-    
-    # remove the added Δ
-    text = re.sub('Δ', '', text)
+    return _get_replacer('spell', _spelling_mapping)(text)
 
-    return text
 
 #######################################
 # convert YIVO orthography into Hasidic
@@ -663,12 +702,12 @@ reformatting = [
     ('[“״″‟„]', '"'),
     ('׳', "'"),
 ]
-    
+
 def hasidify(text):
-    
+
     text = replace_with_precombined(text)
     text = re.split(r"([^אאַאָבבֿגדהווּװױזחטייִײײַכּכךלמםנןסעפּפֿףצץקרששׂתּתA-Za-z'])", text)
-    
+
     # add 'Γ' as a word/token boundary symbol
     # rationale: the alternative is to iterate over tokens, which takes forever
     text = 'Γ'.join(text)
@@ -677,20 +716,20 @@ def hasidify(text):
     # perform respellings
     for key, value in whole_word_variants.items():
         text = re.sub(f'(?<=Γ){key}(?=Γ)', value, text)
-            
+
     for lkizm in lkizmen:
         text = re.sub(f"(?<![בהל'Γ]){lkizm}", f"'{lkizm}", text)
         text = re.sub(f"{lkizm}(?!ים|ימ|ות|'|Γ)", f"{lkizm}'", text)
-            
+
     for key, value in prefix_variants.items():
         text = re.sub(f'(?<=Γ){key}', value, text)
-            
+
     for key, value in suffix_variants.items():
         text = re.sub(f'{key}(?=Γ)', value, text)
-            
+
     for key, value in anywhere_variants.items():
         text = re.sub(key, value, text)
-    
+
     # add 'Δ' to show that exceptions shouldn't be processed by -ig/-likh rule
     for exception in ik_exceptions:
         text = re.sub(f'{exception}(?!Δ)', f'{exception}Δ', text)
@@ -709,27 +748,27 @@ def hasidify(text):
     # perform other replacements involving multiple words
     for key, value in word_group_variants.items():
         text = re.sub(key, value, text)
-    
+
     # final respellings and fixing mistakes
     for pair in reformatting:
         text = re.sub(pair[0], pair[1], text)
-    
+
     for key, value in last_minute_fixes.items():
         text = re.sub(key, value, text)
-    
+
     text = strip_diacritics(text)
-    
+
     return text
-    
+
 def desovietify(text):
     text = replace_with_precombined(text)
     text = re.split(r"([^אאַאָבבֿגדהווּװױזחטייִײײַכּכךלמםנןסעפפּפֿףצץקרששׂתּתA-Za-z'])", text)
-    
+
     # add 'Γ' as a word/token boundary symbol
     text = 'Γ'.join(text)
     text = 'Γ' + text + 'Γ'
 
-    # replace unpointed alef with pasekh alef when not followed by vowels. 
+    # replace unpointed alef with pasekh alef when not followed by vowels.
     # (unpointed alef, if not followed by a vov/yud-based vowel, is alway pasekh alef in Soviet orthography)
     text = re.sub('א(?![י|יִ|ײ|ײַ|וּ|ױ|ו])', 'אַ', text)
 
