@@ -1,0 +1,13 @@
+# Data repos cloned in by the GitHub Action (or by hand for local testing)
+yiddish/submodules/
+
+# Python build and environment files
+.venv/
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
