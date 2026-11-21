@@ -147,7 +147,7 @@ All functions take a string and return a string. Input may be in precomposed (e.
 'שלמהלע האָט חתונה געהאַט'
 ```
 
-**`romanize_german(text)`**: (also available as `romanise_german`) a German-style romanization (originally designed for use with the aeneas audio-text synchronizer). Unlike the other functions, this expects precomposed input.
+**`romanize_german(text)`**: (also available as `romanise_german`) a German-style romanization (originally designed for use with the aeneas audio-text synchronizer).
 
 ```python
 >>> yiddish.romanize_german('װען װעלן מיר זיך שפּילן צוזאַמען?')

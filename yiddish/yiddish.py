@@ -468,6 +468,7 @@ def detransliterate(string, loshn_koydesh=False):
 
 # for automatic segmentation using German; code by Samuel Lo
 def romanise_german(text):
+    text = replace_with_precomposed(text)
     rom = {"א": "",    "אַ": "a", "אָ": "o",
            "ב": "b",   "בּ": "b", "בֿ": "w",
            "ג": "g",
