@@ -49,19 +49,20 @@ def replace_with_decomposed(string, vov_yud=False):
             pass
         else:
             string = re.sub(pair[1], pair[0], string)
-    string = re.sub('ייַ', 'ײַ', string) # the double yud char exists ONLY in this context
-    string = re.sub('בּ', 'ב', string) # diacritic not used in YIVO
+    string = re.sub('ייַ', 'ײַ', string) # fix: the double yud char exists ONLY in this context
+    string = re.sub('בּ', 'ב', string)  # remove diacritic not used in YIVO
     string = re.sub('בּ', 'ב', string)
     return string
 
 def replace_punctuation(string):
-    string = re.sub(r"-", r"־", string) # YIVO-style hyphen
+    string = re.sub(r"-", r"־", string)   # YIVO-style hyphen
     string = re.sub(r'[′׳]', "'", string) # more common punct for abbreviations
     string = re.sub(r'[″״]', '"', string)
     return string
 
 def strip_diacritics(string): # and replace with decomposed
     string = replace_with_decomposed(string)
+    string = string.replace('ײ', 'יי') # the double-yud left over from ײַ
     return re.sub(r'[ִַַָּּּּֿֿׂ]', '', string)
 
 ##########################################
