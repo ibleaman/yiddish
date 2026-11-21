@@ -32,10 +32,13 @@ pairs = [
 ]
 
 def replace_with_precombined(string):
+    # two yuds + pasekh is another way of typing ײַ; the pairs below
+    # would turn the yuds into ײ only after trying (and failing) to join ײַ
+    string = re.sub('ייַ', 'ײַ', string)
+
     for pair in pairs:
         string = re.sub(pair[0], pair[1], string)
-    string = re.sub('בּ', 'ב', string) # diacritic not used in YIVO
-    string = re.sub('בּ', 'ב', string)
+    string = re.sub('בּ|בּ', 'ב', string) # diacritic not used in YIVO
     return string
 
 # "precomposed" is the standard Unicode term; this is an alias
