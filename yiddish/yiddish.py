@@ -53,8 +53,7 @@ def replace_with_decomposed(string, vov_yud=False):
         else:
             string = re.sub(pair[1], pair[0], string)
     string = re.sub('ייַ', 'ײַ', string) # fix: the double yud char exists ONLY in this context
-    string = re.sub('בּ', 'ב', string)  # remove diacritic not used in YIVO
-    string = re.sub('בּ', 'ב', string)
+    string = re.sub('בּ|בּ', 'ב', string)  # remove diacritic not used in YIVO
     return string
 
 def replace_punctuation(string):
