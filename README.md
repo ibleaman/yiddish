@@ -87,7 +87,7 @@ All functions take a string and return a string. Input may be in precomposed (e.
 1
 ```
 
-**`replace_with_decomposed(string, vov_yud=False)`**: replace precomposed characters with decomposed ones. With `vov_yud=True`, the ligatures װ, ױ, ײ are left alone.
+**`replace_with_decomposed(string, vov_yud=False)`**: replace precomposed characters with decomposed ones. With `vov_yud=True`, ligatures that are already present in the input (װ, ױ, ײ) are kept, but digraphs (וו, וי, יי) are not converted into ligatures. (To use ligatures throughout, run `replace_with_precomposed` first, then this function with `vov_yud=True`.) There is one exception, which applies whether or not `vov_yud` is set: ײַ (*pasekh tsvey yudn*) and two *yud*s followed by *pasekh* both become ligature ײ + *pasekh* (U+05F2 U+05B7), the standard Unicode decomposition of ײַ.
 
 ```python
 >>> yiddish.replace_with_decomposed('\ufb2e')
@@ -109,7 +109,7 @@ All functions take a string and return a string. Input may be in precomposed (e.
 'ר\' יוסף ז"ל'
 ```
 
-**`strip_diacritics(string)`**: remove *nekudes*/pointing and ligatures from the text.
+**`strip_diacritics(string)`**: remove the *nekudes*/pointing used in standard (YIVO) Yiddish orthography (*pasekh*, *komets*, *khirek*, *dogesh*, *rofe*, and *sin* dot) and expand the ligatures װ, ױ, ײ, ײַ into plain letters. Other Hebrew points and cantillation marks are not removed.
 
 ```python
 >>> yiddish.strip_diacritics('די פֿאַראײניקטע שטאַטן')
